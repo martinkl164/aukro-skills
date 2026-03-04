@@ -1,10 +1,4 @@
-﻿<p align="center">
-  <a href="https://aukro.cz/" target="_blank">
-    <img src="https://logo.clearbit.com/aukro.cz" alt="Aukro" width="96" height="96" />
-  </a>
-</p>
-
-<h1 align="center">aukro-skills</h1>
+﻿<h1 align="center">aukro-skills</h1>
 
 <p align="center">
   Agent skills for integrating with the <a href="https://api.aukro.cz/">Aukro Public API</a> — works with <strong>GitHub Copilot</strong> and <strong>Cursor</strong>.
