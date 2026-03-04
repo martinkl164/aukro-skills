@@ -1,0 +1,4157 @@
+openapi: 3.0.3
+info:
+  title: Aukro Public API
+  description: 'Aukro Public API provides means for sale on the Aukro portal. Unlike
+    its predecessor webAPI, it does not provide any functionality for both bidding
+    and buying.
+
+
+    Aukro Public API relies on **REST architecture depending** on HTTPS protocol and
+    UTF-8 content encoding. The format for the data transferred is JSON. Each HTTP
+    request has to contain Content-Type: application/json header.'
+  version: '2.0'
+servers:
+- description: Development server
+  url: https://be.djp.aukro.cloud/backend-web/api/v2
+- description: Production server
+  url: https://aukro.cz/api/v2
+tags:
+- name: Changelog
+  description: "- 26.02.2026\n  - Added support for adding videos to an offer, gated\
+    \ by a user-account feature flag\n    - <a href=\"/#tag/Offers/operation/createNewOfferV2\"\
+    ><strong>POST /offers-v2</strong></a>\n    - <a href=\"/#tag/Offers/operation/createNewOffersImportV2\"\
+    ><strong>POST /offers-import-v2</strong></a>\n    - <a href=\"/#tag/Offers/operation/getOffer\"\
+    ><strong>GET /offers/{id}</strong></a>\n    - <a href=\"/#tag/Offers/operation/getOffersListV2\"\
+    ><strong>GET /offers-v2/list</strong></a>\n- 22.01.2026\n  - Removed deprecated\
+    \ endpoints\n    - `POST /offers`\n    - `PATCH /offers/{id}`\n    - `POST /offers-import`\n\
+    \    - `POST /offers/list`\n- 01.12.2025\n  - <a href=\"#tag/Webhooks/operation/newOrderSubmittedV3\"\
+    ><strong>WEBHOOK New Order Submitted v3</strong></a>\n    - New `shipping.code`\
+    \ values:\n      - `AUKRO_ZASILKOVNA_CZ_PL`\n      - `AUKRO_ZASILKOVNA_HU_PL`\n\
+    \      - `AUKRO_ZASILKOVNA_SK_PL`\n- 08.11.2025\n  - <a href=\"#tag/Webhooks/operation/newOrderSubmittedV3\"\
+    ><strong>WEBHOOK New Order Submitted v3</strong></a>\n    - New `shipping.code`\
+    \ values:\n      - `AUKRO_PPL_ADDRESS_CZ_AT`\n      - `AUKRO_PPL_ADDRESS_CZ_DE`\n\
+    \      - `AUKRO_PPL_ADDRESS_CZ_HU`\n      - `AUKRO_PPL_ADDRESS_CZ_SI`\n      -\
+    \ `AUKRO_PPL_ADDRESS_CZ_PL`\n      - `AUKRO_PPL_VM_CZ_DE`\n      - `AUKRO_PPL_VM_CZ_PL`\n\
+    \      - `AUKRO_ZASILKOVNA_ADDRESS_CZ_AT`\n      - `AUKRO_ZASILKOVNA_ADDRESS_HU_AT`\n\
+    \      - `AUKRO_ZASILKOVNA_ADDRESS_SK_AT`\n      - `ZASILKOVNA_DE`\n      - `ZASILKOVNA_HR`\n\
+    \      - `ZASILKOVNA_PL`\n      - `ZASILKOVNA_SI`\n      - `ZASILKOVNA_ADDRESS_AT`\n\
+    \      - `ZASILKOVNA_ADDRESS_DE`\n      - `ZASILKOVNA_ADDRESS_HR`\n      - `ZASILKOVNA_ADDRESS_PL`\n\
+    \      - `ZASILKOVNA_ADDRESS_SI`\n      - `COURIER_CZ_PL`\n      - `COURIER_SK_PL`\n\
+    \      - `USER_SHIPPING_COMMON_HR_PL`\n      - `USER_SHIPPING_COMMON_HU_PL`\n\
+    \      - `USER_SHIPPING_COMMON_PL_ALL`\n      - `USER_SHIPPING_COMMON_PL_AT`\n\
+    \      - `USER_SHIPPING_COMMON_PL_CZ`\n      - `USER_SHIPPING_COMMON_PL_DE`\n\
+    \      - `USER_SHIPPING_COMMON_PL_HR`\n      - `USER_SHIPPING_COMMON_PL_HU`\n\
+    \      - `USER_SHIPPING_COMMON_PL_PL`\n      - `USER_SHIPPING_COMMON_PL_SI`\n\
+    \      - `USER_SHIPPING_COMMON_PL_SK`\n      - `USER_SHIPPING_COMMON_SI_PL`\n\
+    \      - `USER_SHIPPING_INSURED_HR_PL`\n      - `USER_SHIPPING_INSURED_HU_PL`\n\
+    \      - `USER_SHIPPING_INSURED_PL_ALL`\n      - `USER_SHIPPING_INSURED_PL_AT`\n\
+    \      - `USER_SHIPPING_INSURED_PL_CZ`\n      - `USER_SHIPPING_INSURED_PL_DE`\n\
+    \      - `USER_SHIPPING_INSURED_PL_HR`\n      - `USER_SHIPPING_INSURED_PL_HU`\n\
+    \      - `USER_SHIPPING_INSURED_PL_PL`\n      - `USER_SHIPPING_INSURED_PL_SI`\n\
+    \      - `USER_SHIPPING_INSURED_PL_SK`\n      - `USER_SHIPPING_INSURED_SI_PL`\n\
+    - 05.11.2025\n  - Webhook: new <a href=\"/#tag/Webhooks/Webhook-calls\">Source\
+    \ IP addresses (for allowlisting)</a> subsection listing static egress IPs.\n\
+    - 21.10.2025\n  - Introduced webhook subscription management endpoints - <a href=\"\
+    /#tag/Webhooks/operation/postWebhooksSubscriptions\"><strong>POST /webhook/subscriptions</strong></a>\n\
+    \    and <a href=\"/#tag/Webhooks/operation/getWebhooksSubscriptions\"><strong>GET\
+    \ /webhook/subscriptions</strong></a>\n    - Delivery of webhook events now requires\
+    \ an explicit subscription per event.\n    - Accounts with existing webhook settings\
+    \ have been auto-subscribed to all current event types.\n      - Exception: a\
+    \ limited set of accounts were not auto-subscribed to specific events where delivery\
+    \ analysis showed no successful confirmations;\n        these accounts can opt\
+    \ in to those events at any time.\n- 07.10.2025\n  - Removed deprecated webhook\
+    \ events\n    - New Order Submitted v1\n    - New Order Submitted v2\n    - Item\
+    \ Bid v1\n    - Item Bid v2\n    - Cancel Bid v1\n- 20.08.2025\n  - Added support\
+    \ for Forint - HUF currency\n  - Added support for Hungary, Croatia and Slovenia\
+    \ as expose countries\n- 10.08.2025\n  - <a href=\"#tag/Webhooks/operation/newOrderSubmittedV3\"\
+    ><strong>WEBHOOK New Order Submitted v3</strong></a>\n    - New `shipping.code`\
+    \ values:\n      - `AUKRO_ZASILKOVNA_ADDRESS_CZ_DE`\n      - `AUKRO_ZASILKOVNA_ADDRESS_HU_DE`\n\
+    \      - `AUKRO_ZASILKOVNA_ADDRESS_SK_DE`\n      - `COURIER_CZ_AT`\n      - `COURIER_CZ_DE`\n\
+    \      - `COURIER_SK_AT`\n      - `COURIER_SK_DE`\n      - `USER_SHIPPING_COMMON_HR_AT`\n\
+    \      - `USER_SHIPPING_COMMON_HR_DE`\n      - `USER_SHIPPING_COMMON_HU_AT`\n\
+    \      - `USER_SHIPPING_COMMON_HU_DE`\n      - `USER_SHIPPING_COMMON_SI_AT`\n\
+    \      - `USER_SHIPPING_COMMON_SI_DE`\n      - `USER_SHIPPING_INSURED_HR_AT`\n\
+    \      - `USER_SHIPPING_INSURED_HR_DE`\n      - `USER_SHIPPING_INSURED_HU_AT`\n\
+    \      - `USER_SHIPPING_INSURED_HU_DE`\n      - `USER_SHIPPING_INSURED_SI_AT`\n\
+    \      - `USER_SHIPPING_INSURED_SI_DE`\n- 07.08.2025\n  - <a href=\"#tag/Webhooks/operation/newOrderSubmittedV3\"\
+    ><strong>WEBHOOK New Order Submitted v3</strong></a>\n    - New `shipping.code`\
+    \ values:\n      - `AUKRO_ZASILKOVNA_CZ_HR`\n      - `AUKRO_ZASILKOVNA_CZ_SI`\n\
+    \      - `AUKRO_ZASILKOVNA_SK_HR`\n      - `AUKRO_ZASILKOVNA_SK_SI`\n      - `AUKRO_ZASILKOVNA_HU_HR`\n\
+    \      - `AUKRO_ZASILKOVNA_HU_SI`\n      - `AUKRO_ZASILKOVNA_ADDRESS_HU_CZ`\n\
+    \      - `AUKRO_ZASILKOVNA_ADDRESS_HU_SK`\n- 06.08.2025\n  - <a href=\"#tag/Webhooks/operation/newOrderSubmittedV3\"\
+    ><strong>WEBHOOK New Order Submitted v3</strong></a>\n    - New `shipping.code`\
+    \ values:\n      - `COURIER_CZ_SI`\n      - `COURIER_SK_SI`\n      - `USER_SHIPPING_COMMON_HU_SI`\n\
+    \      - `USER_SHIPPING_COMMON_HR_SI`\n      - `USER_SHIPPING_COMMON_SI_ALL`\n\
+    \      - `USER_SHIPPING_COMMON_SI_CZ`\n      - `USER_SHIPPING_COMMON_SI_HR`\n\
+    \      - `USER_SHIPPING_COMMON_SI_HU`\n      - `USER_SHIPPING_COMMON_SI_SI`\n\
+    \      - `USER_SHIPPING_COMMON_SI_SK`\n      - `USER_SHIPPING_INSURED_HU_SI`\n\
+    \      - `USER_SHIPPING_INSURED_HR_SI`\n      - `USER_SHIPPING_INSURED_SI_ALL`\n\
+    \      - `USER_SHIPPING_INSURED_SI_CZ`\n      - `USER_SHIPPING_INSURED_SI_HR`\n\
+    \      - `USER_SHIPPING_INSURED_SI_HU`\n      - `USER_SHIPPING_INSURED_SI_SI`\n\
+    \      - `USER_SHIPPING_INSURED_SI_SK`\n- 01.08.2025\n  - <a href=\"#tag/Webhooks/operation/newOrderSubmittedV3\"\
+    ><strong>WEBHOOK New Order Submitted v3</strong></a>\n    - New `shipping.code`\
+    \ values:\n      - `COURIER_CZ_HR`\n      - `COURIER_SK_HR`\n      - `USER_SHIPPING_COMMON_HU_HR`\n\
+    \      - `USER_SHIPPING_COMMON_HR_ALL`\n      - `USER_SHIPPING_COMMON_HR_CZ`\n\
+    \      - `USER_SHIPPING_COMMON_HR_HR`\n      - `USER_SHIPPING_COMMON_HR_HU`\n\
+    \      - `USER_SHIPPING_COMMON_HR_SK`\n      - `USER_SHIPPING_INSURED_HU_HR`\n\
+    \      - `USER_SHIPPING_INSURED_HR_ALL`\n      - `USER_SHIPPING_INSURED_HR_CZ`\n\
+    \      - `USER_SHIPPING_INSURED_HR_HR`\n      - `USER_SHIPPING_INSURED_HR_HU`\n\
+    \      - `USER_SHIPPING_INSURED_HR_SK`      \n- 30.07.2025\n  - Added <a href=\"\
+    /#tag/Packets/operation/postPackets\"><strong>POST /packets</strong></a>\n  -\
+    \ Added new webhook events related to packets\n    - <a href=\"#tag/Webhooks/operation/packetOrderedV1\"\
+    ><strong>Packet - Ordered</strong></a>\n    - <a href=\"#tag/Webhooks/operation/packetNewLabelV1\"\
+    ><strong>Packet - New Label</strong></a>\n    - <a href=\"#tag/Webhooks/operation/packetFailedV1\"\
+    ><strong>Packet - Failed</strong></a>\n- 02.07.2025\n  - Added support for WebP\
+    \ image format\n- 10.06.2025\n  - <a href=\"#tag/Webhooks/operation/newOrderSubmittedV3\"\
+    ><strong>WEBHOOK New Order Submitted v3</strong></a>\n    - New `shipping.code`\
+    \ values:\n      - `AUKRO_ZASILKOVNA_CZ_HU`\n      - `AUKRO_ZASILKOVNA_HU_CZ`\n\
+    \      - `AUKRO_ZASILKOVNA_HU_HU`\n      - `AUKRO_ZASILKOVNA_HU_SK`\n      - `AUKRO_ZASILKOVNA_SK_HU`\n\
+    \      - `COURIER_CZ_HU`\n      - `COURIER_CZ_SK`\n      - `COURIER_SK_CZ`\n \
+    \     - `COURIER_SK_HU`\n      - `USER_SHIPPING_COMMON_HU_ALL`\n      - `USER_SHIPPING_COMMON_HU_CZ`\n\
+    \      - `USER_SHIPPING_COMMON_HU_HU`\n      - `USER_SHIPPING_COMMON_HU_SK`\n\
+    \      - `USER_SHIPPING_INSURED_HU_ALL`\n      - `USER_SHIPPING_INSURED_HU_CZ`\n\
+    \      - `USER_SHIPPING_INSURED_HU_HU`\n      - `USER_SHIPPING_INSURED_HU_SK`\n\
+    \      - `ZASILKOVNA_ADDRESS_HU`\n      - `ZASILKOVNA_HU`\n- 18.12.2024\n  - <a\
+    \ href=\"#tag/Webhooks/operation/newOrderSubmittedV3\"><strong>WEBHOOK New Order\
+    \ Submitted v3</strong></a>\n    - Changes in `shippingAddress.detail` when `shippingAddress.type`\
+    \ is `PICKUP_POINT`\n      - Added `code`\n        - Replaces `id` as the primary\
+    \ identifier of the pickup point\n        - Supports alphanumeric pickup point\
+    \ identifiers\n      - Deprecated `id`\n        - Will still be populated if the\
+    \ pickup point identifier is numeric\n- 16.10.2024\n  - Added <a href=\"/#tag/Offers/operation/getOffer\"\
+    ><strong>GET /offers/{id}</strong></a>\n    - Provides data about offer\n  - <a\
+    \ href=\"#tag/Webhooks/operation/newOrderSubmittedV3\"><strong>WEBHOOK New Order\
+    \ Submitted v3</strong></a>\n    - New `shipping.code` values:\n      - `AUKRO_PPL_ADDRESS_CZ_CZ`\n\
+    \      - `AUKRO_PPL_ADDRESS_CZ_SK`\n      - `AUKRO_PPL_VM_CZ_CZ`\n      - `AUKRO_PPL_VM_CZ_SK`\n\
+    - 02.10.2024\n  - Added new webhook events related to offers\n    - <a href=\"\
+    #tag/Webhooks/operation/itemCreated\"><strong>Item Created</strong></a>\n    -\
+    \ <a href=\"#tag/Webhooks/operation/itemExposed\"><strong>Item Exposed</strong></a>\n\
+    - 01.10.2024\n  - <a href=\"#tag/Webhooks/operation/newOrderSubmittedV3\"><strong>WEBHOOK\
+    \ New Order Submitted v3</strong></a>\n    - Added `buyerVatNumber` - VAT identification\
+    \ number (if the buyer is a company)\n- 27.08.2024\n  - Added new webhook events\
+    \ related to order payment\n    - <a href=\"#tag/Webhooks/operation/orderStoppedByBuyer\"\
+    ><strong>Order - Stopped By Buyer</strong></a>\n    - <a href=\"#tag/Webhooks/operation/orderPaymentReturnedToBuyer\"\
+    ><strong>Order - Payment Returned To Buyer Webhook</strong></a>\n    - <a href=\"\
+    #tag/Webhooks/operation/orderNotPaid\"><strong>Order - Not Paid</strong></a>\n\
+    \    - <a href=\"#tag/Webhooks/operation/orderReceivedPaymentSplit\"><strong>Order\
+    \ - Received Payment Split</strong></a>\n    - <a href=\"#tag/Webhooks/operation/orderPaidOut\"\
+    ><strong>Order - Paid Out</strong></a>\n  - <a href=\"#tag/Webhooks/operation/newOrderSubmittedV3\"\
+    ><strong>New Order Submitted v3</strong></a>\n    - The `code` field in the `payment`\
+    \ object response is now an enumerated type.\n      - Values align with previously\
+    \ returned values.\n    - Added `detail` field to the `payment` object.\n- 16.07.2024\n\
+    \  - Added <a href=\"/#tag/Offers/operation/createNewOfferV2\"><strong>POST /offers-v2</strong></a>\n\
+    \    - Replaces and deprecates `POST /offers`.\n    - Fields `auctionPrice`, `buyNowPrice`,\
+    \ and `retailPrice` are now represented as objects and require specified currency.\n\
+    \    - Added new field `language`.\n    - `buyNowQuantity` is renamed to `quantity`.\n\
+    \  - Added <a href=\"/#tag/Offers/operation/patchOfferV2\"><strong>PATCH /offers-v2/{id}</strong></a>\n\
+    \    - Replaces and deprecates `PATCH /offers/{id}`.\n    - Fields `auctionPrice`,\
+    \ `buyNowPrice`, and `retailPrice` are now represented as objects and require\
+    \ specified currency.\n    - `buyNowQuantity` is renamed to `quantity`.\n  - Added\
+    \ <a href=\"/#tag/Offers/operation/createNewOffersImportV2\"><strong>POST /offers-import-v2</strong></a>\n\
+    \    - Replaces and deprecates `POST /offers-import`.\n    - Fields `auctionPrice`,\
+    \ `buyNowPrice`, and `retailPrice` are renamed to `auctionPriceAmount`, `buyNowPriceAmount`,\
+    \ and `retailPriceAmount`\n      and require their currency to be specified via\
+    \ `auctionPriceCurrency`, `buyNowPriceCurrency`, and `retailPriceCurrency`.\n\
+    \    - Added new field `language`.\n  - Added new webhook events\n    - <a href=\"\
+    #tag/Webhooks/operation/newOrderSubmittedV3\"><strong>New Order Submitted v3</strong></a>\n\
+    \      - Deprecates previous version\n    - <a href=\"#tag/Webhooks/operation/itemBidV3\"\
+    ><strong>Item Bid v3</strong></a>\n      - Deprecates previous version\n    -\
+    \ <a href=\"#tag/Webhooks/operation/cancelBidV2\"><strong>Cancel Bid v2</strong></a>\n\
+    \      - Deprecates previous version\n- 09.07.2024\n  - Added <a href=\"/#tag/Offers/operation/getOffersListV2\"\
+    ><strong>GET /offers-v2/list</strong></a>\n    - Replaces and deprecates `POST\
+    \ /offers/list`.\n    - Supports specifying language and currency via headers.\
+    \ Defaults to `cs-CZ` and `CZK`.\n  - <a href=\"/#tag/Categories/operation/categoriesAll\"\
+    ><strong>GET /categories</strong></a> and <a href=\"/#tag/Categories/operation/categoryAttributes\"\
+    ><strong>GET /categories/{id}/attributes</strong></a>\n    - Support specifying\
+    \ language via header. Defaults to `cs-CZ`.\n- 19.06.2024\n  - <strong>POST /offers/bulk</strong>\n\
+    \    - Removed the endpoint since there was no reported usage.\n- 18.04.2024\n\
+    \  - `POST /offers`, `POST /offers/bulk`, `POST /offers-import`, <a href=\"/#tag/Offers/operation/uploadImages\"\
+    ><strong>POST /offers/images</strong></a>, <a href=\"/#tag/Offers/operation/uploadImagesUrl\"\
+    ><strong>POST /offers/images/url</strong></a>\n    - The number of images in the\
+    \ offer increased up to 24 and it depends on the category where it is exposed.\n\
+    \  - <a href=\"/#tag/Categories/operation/categoriesAll\"><strong>GET /categories</strong></a>\n\
+    \    - Added `maxItemImages` to response. Maximum number of images that offer\
+    \ in this category can have.\n- 04.03.2024\n  - `POST /offers`, `POST /offers/bulk`,\
+    \ `POST /offers-import`\n    - Added ability to set promotions on offers - `priorityListing`,\
+    \ `boldTitle`, `highlight`\n- 20.01.2024\n  - `POST /offers/list`\n    - Added\
+    \ `createTime` to response\n- 04.01.2024\n  - <strong>WEBHOOK New Order Submitted\
+    \ v2</strong>\n    - Added `shippingAddress.detail.firstName` and `shippingAddress.detail.lastName`\
+    \ to response when `shippingAddress.type` is `PICKUP_POINT`\n    - Fixed `shipping.code`\
+    \ enum to return correct codes\n- 06.12.2023\n  - <strong>WEBHOOK New Order Submitted\
+    \ v2</strong>\n    - Fixed `buyerPhone` to correctly show manually filled phone\
+    \ number\n- 18.10.2023\n  - `POST /offers/list`\n    - Added `images` to response\
+    \ and `thumbnail` is now deprecated\n  - <strong>WEBHOOK Cancel Bid</strong>\n\
+    \    - Added event which occurs when a bid on an offer is cancelled\n- 26.09.2023\n\
+    \  - <strong>WEBHOOK New Order Submitted v2</strong>\n    - Added version 2 of\
+    \ New Order Submitted event\n      - Differences compared to version 1: \n   \
+    \     - `country` is now, instead of full country name, filled with its respective\
+    \ country code in compliance with ISO 3166 standard alpha-2 variant (CZ, SK, PL).\n\
+    \        - `country` is now filled even in case of CZ\n        - `shipping.code`\
+    \ is now an enum\n        - `shippingAddress.type` is now either STANDARD or PICKUP_POINT\
+    \ (notation changed)\n        - `orderItem.orderItemType` is now either AUCTION\
+    \ or BUYNOW (notation changed)\n  - <strong>WEBHOOK Item Bid v2</strong>\n   \
+    \ - Added version 2 of the Item Bid event\n      - Differences compared to version\
+    \ 1:\n        - itemId is now type long instead of array of longs\n- 31.08.2023\n\
+    \  - <a href=\"#tag/Webhooks/operation/itemExpired\"><strong>WEBHOOK Item Expired</strong></a>\n\
+    \    - Event extended also for Buy Now offers\n  - <a href=\"#tag/Webhooks/operation/itemReexposed\"\
+    ><strong>WEBHOOK Item Reexposed</strong></a>\n    - Added event which occurs when\
+    \ the offer has been re-exposed\n- 01.08.2023\n  - `POST /offers`\n    - Added\
+    \ settings for Best offer function and verified buyers only when creating offers\n\
+    - 24.07.2023\n  - `POST /offers/list`\n    - Added endpoint for listing current\
+    \ user's offers\n- 25.5.2023\n  - <strong>WEBHOOK New Order Submitted</strong>\n\
+    \    - Added `itemExtId` and `itemName` to `orderItems` array\n- 27.4.2023\n \
+    \ - `PATCH /offers`\n    - Added ability of editing name, description, category,\
+    \ attributes\n"
+- name: Authentication
+  description: '
+
+    ## API Key
+
+
+    Please note that the API in this documentation cannot be accessed without a valid
+    API key.
+
+    To use the API, you must first obtain an API key from us. Without a valid key,
+    you will not be able to make requests to the API.
+
+    '
+- name: Offers
+  description: "Offers is an interface for offers managements.\n\n## Type of offers\n\
+    \n### Auction\n\nOffer that is sold to the highest bidder.\n\n### Buy now\n\n\
+    Offer that is available for immediate purchase.\n\n### Combined offer\n\nOffer\
+    \ that is both Buy now offer and Auction. If bid is placed on the offer, it is\
+    \ transitioned to Auction.\nOn the other hand, if the offer is purchased through\
+    \ the Buy Now option, the item is deemed unavailable for further bidding or purchasing,\n\
+    as it is limited to a quantity of one.\n\n## Creating offers\n\nThere are two\
+    \ ways of creating offers on the Aukro portal:\n\n- creating offers based on JSON\
+    \ payload - <a href=\"/#tag/Offers/operation/createNewOfferV2\">POST /offers-v2</a>\n\
+    \n- creating offers from a CSV or JSON file - <a href=\"/#tag/Offers/operation/createNewOffersImportV2\"\
+    >POST /offers-v2</a>\n\n## Offer currency\n\nTo specify currencies in request\
+    \ headers and body parameters, use three-character <a href=\"https://en.wikipedia.org/wiki/ISO_4217#Active_codes\"\
+    >ISO-4217 code</a>.\n\nDuring offer creation, the currency selection is tied to\
+    \ the domain where the user account is registered.\nFor read-only endpoints, this\
+    \ selection is not restricted.\n\n<table>\n  <thead>\n    <tr>\n      <th>Currency</th>\n\
+    \      <th>Code</th>\n      <th>Max Decimal places (Offer creation)</th>\n   \
+    \   <th>Use When Account is Registered On</th>\n    </tr>\n  </thead>\n  <tbody>\n\
+    \    <tr>\n      <td>Czech koruna</td>\n      <td>CZK</td>\n      <td>0</td>\n\
+    \      <td><a href=\"https://aukro.cz/\">aukro.cz</a</td>\n    </tr>\n    <tr>\n\
+    \      <td>Euro</td>\n      <td>EUR</td>\n      <td>2</td>\n      <td><a href=\"\
+    https://aukro.sk/\">aukro.sk</a</td>\n    </tr>\n    <tr>\n      <td>Forint</td>\n\
+    \      <td>HUF</td>\n      <td>-1 ( rounded to tens )</td>\n      <td><a href=\"\
+    https://aukro.hu/\">aukro.hu</a</td>\n    </tr>\n  </tbody>\n</table>\n\n## Offer\
+    \ language\n\nTo specify language in request headers and body parameters, use\
+    \ <a href=\"https://en.wikipedia.org/wiki/IETF_language_tag\">BCP-47 language\
+    \ tag</a>.\n\nDuring offer creation, the language selection is tied to the domain\
+    \ where the user account is registered.\nFor read-only endpoints, this selection\
+    \ is not restricted.\n\n<table>\n  <thead>\n    <tr>\n      <th>Language</th>\n\
+    \      <th>Country</th>\n      <th>BCP-47 Code</th>\n      <th>Use When Account\
+    \ is Registered On</th>\n    </tr>\n  </thead>\n  <tbody>\n    <tr>\n      <td>Czech</td>\n\
+    \      <td>Czech Republic</td>\n      <td>cs-CZ</td>\n      <td><a href=\"https://aukro.cz/\"\
+    >aukro.cz</a</td>\n    </tr>\n    <tr>\n      <td>Slovak</td>\n      <td>Slovak\
+    \ Republic</td>\n      <td>sk-SK</td>\n      <td><a href=\"https://aukro.sk/\"\
+    >aukro.sk</a</td>\n    </tr>\n    <tr>\n      <td>Hungarian</td>\n      <td>Hungary</td>\n\
+    \      <td>hu-HU</td>\n      <td><a href=\"https://aukro.hu/\">aukro.hu</a</td>\n\
+    \    </tr>\n    <tr>\n      <td>Croatian</td>\n      <td>Croatia</td>\n      <td>hr-HR</td>\n\
+    \      <td><a href=\"https://aukro.hr/\">aukro.hr</a</td>\n    </tr>\n    <tr>\n\
+    \      <td>Slovenian</td>\n      <td>Slovenia</td>\n      <td>sl-SI</td>\n   \
+    \   <td><a href=\"https://aukro.si/\">aukro.si</a</td>\n    </tr>\n  </tbody>\n\
+    </table>\n\n## Offer description\n\nThe offer description is a detailed description\
+    \ of subject being offered for sale.\nTo ensure its responsiveness and appropriate\
+    \ presentation on mobile devices, Aukro\nhas introduced some restrictions on the\
+    \ description format.\n\n\nBasically, offer description is an HTML enabled text\
+    \ with a maximum length of 65,000 characters including HTML. However, the HTML\
+    \ is not full-fledged one, but it is restricted to limited set of elements. The\
+    \ following HTML elements are allowed in the offer description:\n\n- `h2` for\
+    \ section title\n\n- `p` for paragraphs\n\n- `strong` for bold text\n\n- `ol`\
+    \ and `li` for ordered lists\n\n- `ul` and `li` for unordered lists\n\n\nThere\
+    \ are also restrictions to the structure of offer description. The offer description\
+    \ consists of so-called blocks of various types that can be combined together.\
+    \ Basic text formatting can also be used inside the blocks.\n\nThe root of HTML\
+    \ description must be always a `div` element with class `aukro-offer-default`.\
+    \ It is then possible to use several defined blocks with the `data-layout` attribute\
+    \ inside. Furthermore, it is possible to use 4 types of content formatting. \n\
+    \n### Offer description format\n\nThis is a text with support for allowed HTML\
+    \ tags with a maximum length of 65,000 characters including HTML. This is not\
+    \ full-fledged html, but a limited set of elements. The offer description consists\
+    \ of so-called blocks (there may be several of different types below one another).\
+    \ Basic text formatting can also be used inside the blocks.\n\nHTML must always\
+    \ be wrapped in a div element with class `aukro-offer-default`. In it, it is then\
+    \ possible to use several defined blocks\nwith the `data-layout` attribute and\
+    \ a value according to the block type. Furthermore, it is possible to use 4 types\
+    \ of content formatting.\n\nExample:\n```html\n<div class=\"aukro-offer-default\"\
+    >\n    <div data-layout=\"text\">\n        <div>\n          <p>text</p>\n    \
+    \    </div>\n    </div>\n  </div>\n```\n\n### Block type\n\n- pure text\n```html\n\
+    <div class=\"aukro-offer-default\">\n    <div data-layout=\"text\">\n      <div>\n\
+    \          <p>text</p>\n      </div>\n    </div>\n</div>\n```\n- image only\n\
+    ```html\n<div class=\"aukro-offer-default\">\n    <div data-layout=\"image\">\n\
+    \      <div>\n          <img src=\"https://f.aukro.cz/images/0\">\n      </div>\n\
+    \    </div>\n</div>\n```\n- photo on the left + text on the right\n```html\n<div\
+    \ class=\"aukro-offer-default\">\n  <div data-layout=\"text-image\">\n      <div>\n\
+    \          <p>text</p>\n      </div>\n      <div>\n          <img src=\"https://f.aukro.cz/images/0\"\
+    >\n      </div>\n    </div>\n</div>\n```\n- text on the left + photo on the right\n\
+    ```html\n<div class=\"aukro-offer-default\">\n    <div data-layout=\"image-text\"\
+    >\n      <div>\n          <img src=\"https://f.aukro.cz/images/0\">\n      </div>\n\
+    \      <div>\n          <p>text</p>\n      </div>\n    <div>\n</div>\n```\n- 2\
+    \ photos side by side\n```html\n<div class=\"aukro-offer-default\">\n    <div\
+    \ data-layout=\"image-image\">\n      <div>\n          <img src=\"https://f.aukro.cz/images/0\"\
+    >\n      </div>\n      <div>\n          <img src=\"https://f.aukro.cz/images/1\"\
+    >\n      </div>\n    </div>\n</div>   \n```\n\n### Text formatting\n\n- 2 types\
+    \ of heading\n```html\n<h2>Heading 2 text</h2>\n```\n- bold text\n```html\n<strong>Strong\
+    \ text</strong>\n```\n- numbered bullet points\n```html\n<ol><li>First li</li><li>Second\
+    \ li</li></ol>\n```\n- unnumbered bullet points\n```html\n<ul><li>First li</li><li>Second\
+    \ li</li></ul>\n```\n\n## Offer images\n\nEvery offer is required to include at\
+    \ least one title image. You can provide this image in one of two ways: \n\n-\
+    \ Uploading the image file directly\n\n- Supplying a URL that points to the image\
+    \  \n\nSupported file formats are JPEG (`.jpg`, `.jpeg`, `.jfif`), PNG (`.png`),\
+    \ WebP (`.webp`), and GIF (`.gif`).\n\n### Image via URL\n\nWhen you provide an\
+    \ image URL, the Aukro system first sends a `HEAD` request. The target server\
+    \ must respond with `200 OK` and include both\n`Content-Type` and `Content-Length`\
+    \ headers. Only after validating the format and size does the system download\
+    \ the image with a `GET` request.\nBoth requests are subject to timeouts, so ensure\
+    \ the server responds in a timely manner.\n\nIf your URLs point to images generated\
+    \ on demand (e.g., by a CDN), pre-warm those URLs before submitting your request;\
+    \ this improves processing\ntime and reduces the risk of timeouts and missing\
+    \ required headers (such as `Content-Type` and `Content-Length`).\n\n## Offer\
+    \ states\n\nList of all states the offer can be in during its lifecycle.\n\n###\
+    \ SCHEDULED\nOffer has been created by seller but has a delayed starting time,\
+    \ therefore is visible to the seller only. It will transition to `ACTIVE`\nat\
+    \ specified starting time.\n\n### ACTIVE\nOffer is visible to other users and\
+    \ can be bid on or bought.\n\n### ENDED\nOffer is still visible to other users\
+    \ but can no longer be bid on or bought.\n\n### SCHEDULED_PUBLIC\nOffer is not\
+    \ yet available for bidding nor buying, but can be visited and seen by other users.\n\
+    \n### SCHEDULED_ACTIVE\nOffer is visible to other users and can be bid on or bought.\
+    \ Same as `ACTIVE` except that the state cannot transition into `ENDED` directly.\n"
+- name: Webhooks
+  description: "Webhooks are HTTP POST notifications that Aukro sends to your server\
+    \ when specific events occur. Use them to receive near-real-time updates\nabout\
+    \ activity in your Aukro account—for example, when a bid is placed on your auction\
+    \ or when a buyer submits an order.\n\n## Delivery settings and event subscriptions\n\
+    \nProvide Aukro with your HTTPS endpoint URL (the destination for webhook POST\
+    \ requests). After the endpoint is configured, explicitly subscribe\nto the event\
+    \ types you want to receive; only subscribed events are delivered.\n\n## Webhook\
+    \ calls\n\nAukro sends webhooks as HTTP POST requests to your configured URL with\
+    \ a JSON payload. Any `2xx` response is considered a successful delivery. \nEach\
+    \ request has a 2-second timeout; design your handler to acknowledge quickly (you\
+    \ can process work asynchronously after responding).\n\n### Security\n\nTo ensure\
+    \ request authenticity, Aukro includes an `Authorization` header whose value is\
+    \ the one you specified when creating\n<a href=\"/#tag/Webhooks/operation/createUserWebhookSettings\"\
+    >Webhook Settings</a>.\n\n### Source IP addresses (for allowlisting)\n\nWebhook\
+    \ deliveries originate from Aukro’s static egress IP addresses. If you protect\
+    \ your endpoint with a firewall, WAF, or DDoS mitigation,\nallowlist the following\
+    \ source IPs to ensure delivery:\n\n- **Production:** `185.175.85.228`\n- **Development:**\
+    \ `185.175.85.227`\n\n## Retries, dropouts, and replay\n\nIf Aukro does not receive\
+    \ a `2xx` response to a notification request, or cannot connect to your server,\
+    \ it will retry up to 6 times with the\nfollowing backoff:\n\n<ul>\n  <li>1st\
+    \ retry after 10 minutes</li>\n  <li>2nd retry after 20 minutes</li>\n  <li>3rd\
+    \ retry after 30 minutes</li>\n  <li>4th retry after 1 hour</li>\n  <li>5th retry\
+    \ after 2 hours</li>\n  <li>6th retry after 4 hours</li>\n</ul>\n\nIf all attempts\
+    \ fail, Aukro will retain the notification event object on its side for a limited\
+    \ period of 2 weeks.\n\nAfter webhook functionality is restored by a third party,\
+    \ it can \\\"replay\\\" stored undelivered notifications\nby calling <a href=\"\
+    /#tag/Webhooks/operation/replayFailedWebhookEvents\">POST /webhook/event/failed/replay</a>.\
+    \ \nThis call queues any undelivered notifications to be sent again to the third-party\
+    \ endpoint, which can process them in the standard way.\n\nNote that webhook events\
+    \ that you later unsubscribe from will still be attempted for delivery and will\
+    \ be included in replay.\n\n## Generic notification structure\n\nAll notifications\
+    \ contain an event object in the following envelope:\n\n\n```json\n  {\n    eventId:\
+    \ EventId,\n    events: [Event1, …, EventN]\n  }\n```\n\n\nwhere\n\n* `events`\
+    \ is a list of objects of *the same event* in currently supported versions for\
+    \ backwards compatibility (see below)\n\n* _EventX_ is always\n\n```json\n  {\n\
+    \    eventType: EventType,\n    eventTimestamp: EventTimestamp,\n    eventDetail:\
+    \ EventDetailDto\n  }\n```\n\n\nwhere\n\n- _EventId_ - event id, UUID4\n\n- _EventType_\
+    \ - the type of event to which the notification relates\n\n  - types are versioned\
+    \ by suffix `_vX`, where _X_ is the major version number (usually breaking) and\
+    \ Aukro does not version nonbreaking changes\n\n  - ensuring backward compatibility\
+    \ in case of transitions to the breaking version, the notification will always\
+    \ contain both versions of the event for a limited time; time will be used to\
+    \ switch from a lower version to a higher one\n\n- _EventTimestamp_ - timestamp\
+    \ of the moment when the event to which the notification refers occurred\n  -\
+    \ it is not a timestamp of the moment, sending the notification\n\n  - ISO 8601\
+    \ form\n\n- _EventDetailDto_ - it is a JSON object whose schema is determined\
+    \ by the eventType value\n"
+- name: Categories
+- name: Packets
+- name: Shipping Templates
+- name: models
+  x-displayName: Referenced Models
+  description: 'Models that are referenced in this documentation.
+
+
+    ## OfferV2RequestLocation
+
+    <SchemaDefinition schemaRef="#/components/schemas/OfferV2RequestLocation" showReadOnly={true}
+    showWriteOnly={true} />
+
+
+    ## OfferV2RequestVideo
+
+    <SchemaDefinition schemaRef="#/components/schemas/OfferV2RequestVideo" showReadOnly={true}
+    showWriteOnly={true} />
+
+
+    ## PublicApiItemAttributeDto
+
+    <SchemaDefinition schemaRef="#/components/schemas/PublicApiItemAttributeDto" showReadOnly={true}
+    showWriteOnly={true} />
+
+
+    ## WebhookEventRoot
+
+    <SchemaDefinition schemaRef="#/components/schemas/WebhookEventRoot" showReadOnly={true}
+    showWriteOnly={true} />
+
+    '
+paths:
+  /offers/{id}:
+    get:
+      tags:
+      - Offers
+      summary: Offer Data
+      description: 'Get data about offer. You must be owner of this offer.
+
+        '
+      operationId: getOffer
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          title: Id of offer
+          type: integer
+          format: int64
+      - $ref: '#/components/parameters/XAcceptLanguageHeader'
+      - $ref: '#/components/parameters/XAcceptCurrencyHeader'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OfferDataResponse'
+      security:
+      - bearer-key: []
+        api-key: []
+  /offers-v2/{id}:
+    patch:
+      tags:
+      - Offers
+      summary: Offer update
+      description: "To update an offer, its status must be one of the following: `ACTIVE`,\
+        \ `SCHEDULE`, `SCHEDULED_PUBLIC`, or `SCHEDULED_ACTIVE`.\nOffers with status\
+        \ `ENDED` cannot be updated.\n\n### Restrictions and guidelines for patchable\
+        \ properties\n\n#### Name\nThe name cannot be changed if the offer already\
+        \ has bids or purchases.\n\n#### Description\nThe description cannot be changed\
+        \ if the offer already has any bids or purchases. However, you can append\
+        \ plain text to the existing description\nusing the `additionalDescription`\
+        \ field.\n\n#### Category\nThe category cannot be changed if 12 hours have\
+        \ passed since the start of the offer or if the offer already has any bids\
+        \ or purchases. When\nupdating the category, you must also provide attributes.\n\
+        \n#### Attributes\nThe attributes cannot be changed if the offer already has\
+        \ any bids or purchases.\n\n#### Auction price\nThis is the new starting price\
+        \ for an Auction or Combined offer.\n- Restrictions\n  - For Auctions, the\
+        \ starting price cannot be changed if the Auction already has bids.\n  - If\
+        \ the updated offer is Buy Now offer, it cannot be set if the offer already\
+        \ has purchases.\n  - In the case of a Combined offer, the new price must\
+        \ not be higher than the Buy Now price.\n- Guidelines\n  - If the updated\
+        \ offer is a Buy Now offer with no purchases, it becomes a Combined offer.\
+        \ Should the updated Buy Now offer have a quantity\n  greater than 1, it will\
+        \ automatically be set to 1.\n  - If the offer is a Combined offer and the\
+        \ new price is 0, the offer transitions to Buy now offer.\n\n#### Buy Now\
+        \ price\nThis is the new price for a Buy now offer or Combined offer.\n- Restrictions\n\
+        \  - If the updated offer is an Auction, it cannot be set if it already has\
+        \ bids.\n  - The new price must be higher than the Auction price in the case\
+        \ of a Combined offer.\n- Guidelines\n  - When applied to Auction that has\
+        \ no bids, the offer transitions to a Combined offer.\n  - If the offer is\
+        \ a Combined offer and the new price is 0, the offer transitions to Auction.\n"
+      operationId: patchOfferV2
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OffersV2PatchRequest'
+        required: true
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          title: Id of offer to update
+          type: integer
+          format: int64
+      responses:
+        '204':
+          description: Properties were updated
+        '400':
+          $ref: '#/components/responses/400'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '409':
+          $ref: '#/components/responses/409'
+        '417':
+          $ref: '#/components/responses/417'
+        '500':
+          $ref: '#/components/responses/500'
+        '503':
+          $ref: '#/components/responses/503'
+      security:
+      - bearer-key: []
+        api-key: []
+  /offers/{id}/terminate:
+    post:
+      tags:
+      - Offers
+      summary: Offer terminate
+      description: 'Use this resource to terminate a single offer (item) that is in
+        one of these states: `ACTIVE`, `SCHEDULE`, `SCHEDULED_PUBLIC`, `SCHEDULED_ACTIVE`.
+
+        Offers in `SCHEDULE` state will be completely deleted. Offers in state `ENDED`
+        cannot be terminated as they have already
+
+        reached end of their lifecycle. Offers in the remaining states will be transitioned
+        to `ENDED`.
+
+
+        #### Auctions
+
+        When terminating auction that has bids, its bids may be cancelled by setting
+        property `auctionCancelBids` to `true`. When this is the case,
+
+        the bids will be cancelled and current highest bidder will not become a winner.
+        In this case, reason for cancellation must be
+
+        given (`auctionCancelBidsReason`). If value is `false` and auction has bids,
+        it will be evaluated (current highest bidder becomes a winner).
+
+
+        #### Buy now offers
+
+        No special rules currently apply.
+
+        '
+      operationId: terminateOffer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OfferTerminateRequest'
+        required: true
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          title: Id of offer to terminate
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: Offer was terminated
+        '400':
+          $ref: '#/components/responses/400'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '409':
+          $ref: '#/components/responses/409'
+        '417':
+          $ref: '#/components/responses/417'
+        '500':
+          $ref: '#/components/responses/500'
+        '503':
+          $ref: '#/components/responses/503'
+      security:
+      - bearer-key: []
+        api-key: []
+  /offers-import-v2:
+    post:
+      tags:
+      - Offers
+      summary: Create new offers from file
+      description: "Use this resource to list offers based on data in file. The file\
+        \ format can be one of the following:\n  - CSV - <a href=\"/assets/examples/offers-import_example_v2.csv\"\
+        >example file</a>\n  - JSON - <a href=\"/assets/examples/offers-import_example_v2.json\"\
+        >example file</a>\n\nThere is a limit of 1000 offers in one CSV file or 10\
+        \ MB of its size.\n\n## Structure\n\n<table>\n  <thead>\n    <tr>\n      <th>Field\
+        \ name</th>\n      <th>Description</th>\n      <th>Format</th>\n      <th>Possible\
+        \ values</th>\n      <th>Required</th>\n      <th>Default value</th>\n   \
+        \ </tr>\n  </thead>\n  <tbody>\n    <tr>\n      <td>entityId</td>\n      <td>identifier\
+        \ for request / response during bulk operations</td>\n      <td>int</td>\n\
+        \      <td></td>\n      <td>YES</td>\n      <td></td>\n    </tr>\n    <tr>\n\
+        \      <td>name</td>\n      <td>name of offer</td>\n      <td>string, max.\
+        \ length 70</td>\n      <td></td>\n      <td>YES</td>\n      <td></td>\n \
+        \   </tr>\n    <tr>\n      <td>language</td>\n      <td>Primary language of\
+        \ the offer</td>\n      <td>string (BCP-47 standard)</td>\n      <td></td>\n\
+        \      <td>YES</td>\n      <td></td>\n    </tr>\n    <tr>\n      <td>extId</td>\n\
+        \      <td>external identifier</td>\n      <td>string, max. length 50</td>\n\
+        \      <td></td>\n      <td>NO</td>\n      <td></td>\n    </tr>\n    <tr>\n\
+        \      <td>categoryId</td>\n      <td>category identifier</td>\n      <td>int</td>\n\
+        \      <td>id of category from Aukro DB</td>\n      <td>YES</td>\n      <td></td>\n\
+        \    </tr>\n    <tr>\n      <td>description</td>\n      <td></td>\n      <td>html</td>\n\
+        \      <td></td>\n      <td>YES</td>\n      <td></td>\n    </tr>\n    <tr>\n\
+        \      <td>auctionPriceAmount</td>\n      <td></td>\n      <td>decimal</td>\n\
+        \      <td></td>\n      <td>YES</td>\n      <td></td>\n    </tr>\n    <tr>\n\
+        \      <td>auctionPriceCurrency</td>\n      <td></td>\n      <td>string (ISO\
+        \ 4217)</td>\n      <td></td>\n      <td>YES</td>\n      <td></td>\n    </tr>\n\
+        \    <tr>\n      <td>buyNowPriceAmount</td>\n      <td></td>\n      <td>decimal</td>\n\
+        \      <td></td>\n      <td>YES</td>\n      <td></td>\n    </tr>\n    <tr>\n\
+        \      <td>buyNowPriceCurrency</td>\n      <td></td>\n      <td>string (ISO\
+        \ 4217)</td>\n      <td></td>\n      <td>YES</td>\n      <td></td>\n    </tr>\n\
+        \    <tr>\n      <td>retailPriceAmount</td>\n      <td></td>\n      <td>decimal</td>\n\
+        \      <td>retailPrice &gt 0</td>\n      <td>NO</td>\n      <td></td>\n  \
+        \  </tr>\n    <tr>\n      <td>retailPriceCurrency</td>\n      <td></td>\n\
+        \      <td>string (ISO 4217)</td>\n      <td>retailPrice &gt 0</td>\n    \
+        \  <td>NO</td>\n      <td></td>\n    </tr>\n    <tr>\n      <td>quantity</td>\n\
+        \      <td></td>\n      <td>int</td>\n      <td>if auctionPrice &gt; 0, then\
+        \ quantity = 1<br>if auctionPrice = 0, then quantity &gt;= 1</td>\n      <td>YES</td>\n\
+        \      <td></td>\n    </tr>\n    <tr>\n      <td>quantityUnit</td>\n     \
+        \ <td></td>\n      <td>string</td>\n      <td>pieces - kusy<br>sets - sety<br>pairs\
+        \ - páry</td>\n      <td>NO</td>\n      <td>pieces</td>\n    </tr>\n    <tr>\n\
+        \      <td>startingAt</td>\n      <td></td>\n      <td>timestamp with time\
+        \ zone</td>\n      <td>ISO 8601</td>\n      <td>NO</td>\n      <td>NOW()</td>\n\
+        \    </tr>\n    <tr>\n      <td>duration</td>\n      <td></td>\n      <td>int</td>\n\
+        \      <td>Possible values are 3, 5, 7, 10 or 30. The value 30 can only be\
+        \ used for a Buy now offer.</td>\n      <td>NO</td>\n      <td>7</td>\n  \
+        \  </tr>\n    <tr>\n      <td>reexposeType</td>\n      <td></td>\n      <td>int</td>\n\
+        \      <td>0 - no auto-renew/re-expose<br>\n      1 -<br>\n      auction:\
+        \ If the offer is auctioned, start a new auction for another offer<br>\n \
+        \     buy now: Automatically extend with the original number of offers when\
+        \ sold out<br>\n      2 -<br>\n      auction: Automatically extend until auction,<br>\n\
+        \      buy now: Automatically renew until all offers are sold out</td>\n \
+        \     <td>NO</td>\n      <td>0</td>\n    </tr>\n    <tr>\n      <td>location</td>\n\
+        \      <td>location of the offer</td>\n      <td>JSON object</td>\n      <td><a\
+        \ href=\"/#tag/models/OfferV2RequestLocation\">specification</a></td>\n  \
+        \    <td>YES</td>\n      <td></td>\n    </tr>\n    <tr>\n      <td>shippingTemplateId</td>\n\
+        \      <td>shipping template identifier</td>\n      <td>int</td>\n      <td>id\
+        \ of shipping template from Aukro DB</td>\n      <td>YES</td>\n      <td></td>\n\
+        \    </tr>\n    <tr>\n      <td>shippingPayer</td>\n      <td>the payer of\
+        \ the transport costs</td>\n      <td>string</td>\n      <td>buyer<br>seller</td>\n\
+        \      <td>NO</td>\n      <td>buyer</td>\n    </tr>\n    <tr>\n      <td>images</td>\n\
+        \      <td></td>\n      <td>string</td>\n      <td>\"image_1_url image_2_url\
+        \ ... image_8_url\"</td>\n      <td>YES, at least 1 image</td>\n      <td></td>\n\
+        \    </tr>\n    <tr>\n      <td>videos</td>\n      <td>Optional list of videos\
+        \ for the offer. A maximum of one video is allowed. Only YouTube videos are\
+        \ supported. Video usage requires user-account flag to be enabled.</td>\n\
+        \      <td>JSON array of objects</td>\n      <td><a href=\"/#tag/models/OfferV2RequestVideo\"\
+        >specification</a></td>\n      <td>NO</td>\n    <td></td>\n    </tr>\n   \
+        \ <tr>\n      <td>bestOffer</td>\n      <td></td>\n      <td>boolean</td>\n\
+        \      <td></td>\n      <td>NO</td>\n      <td>false</td>\n    </tr>\n   \
+        \ <tr>\n      <td>onlyVerifiedBuyersEnabledOverride</td>\n      <td>Override\
+        \ for current onlyVerifiedBuyersEnabled setting</td>\n      <td>boolean</td>\n\
+        \      <td></td>\n      <td>NO</td>\n      <td>false</td>\n    </tr>\n   \
+        \ <tr>\n      <td>attributes</td>\n      <td></td>\n      <td>JSON array of\
+        \ objects</td>\n      <td><a href=\"/#tag/models/PublicApiItemAttributeDto\"\
+        >specification</a></td>\n      <td>YES, for mandatory attributes (in specific\
+        \ categories)</td>\n      <td></td>\n    </tr>\n    <tr>\n      <td>priorityListing</td>\n\
+        \      <td>Indicates whether the offer should be listed with priority. Service\
+        \ is <a href=\"https://aukro.cz/stranka/propagace-a-vylepsovani-nabidek\"\
+        >charged</a>.</td>\n      <td>boolean</td>\n      <td></td>\n      <td>NO</td>\n\
+        \      <td>false</td>\n    </tr>\n    <tr>\n      <td>boldTitle</td>\n   \
+        \   <td>Indicates whether the offer should be listed with a bold title. Service\
+        \ is <a href=\"https://aukro.cz/stranka/propagace-a-vylepsovani-nabidek\"\
+        >charged</a>.</td>\n      <td>boolean</td>\n      <td></td>\n      <td>NO</td>\n\
+        \      <td>false</td>\n    </tr>\n    <tr>\n      <td>highlight</td>\n   \
+        \   <td>Indicates whether the offer should be highlighted. Service is <a href=\"\
+        https://aukro.cz/stranka/propagace-a-vylepsovani-nabidek\">charged</a>.</td>\n\
+        \      <td>boolean</td>\n      <td></td>\n      <td>NO</td>\n      <td>false</td>\n\
+        \    </tr>\n  </tbody>\n  </table>\n"
+      operationId: createNewOffersImportV2
+      parameters:
+      - in: query
+        name: userId
+        schema:
+          title: Reserved for future used, currently ignored
+          type: integer
+          format: int64
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              properties:
+                data:
+                  type: string
+                  format: binary
+                  description: Structure of file described in the table above
+              required:
+              - data
+        required: true
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiResponseOfferImportDto'
+        '400':
+          $ref: '#/components/responses/400'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '409':
+          $ref: '#/components/responses/409'
+        '417':
+          $ref: '#/components/responses/417'
+        '500':
+          $ref: '#/components/responses/500'
+        '503':
+          $ref: '#/components/responses/503'
+      security:
+      - bearer-key: []
+        api-key: []
+  /offers-import/{id}:
+    get:
+      tags:
+      - Offers
+      summary: Get imported offers status
+      description: 'Use this resource to get status on imported offers from a CSV
+        file.
+
+        '
+      operationId: getOffersImport
+      parameters:
+      - in: path
+        name: id
+        required: true
+        description: 'Id of the CSV import which status is requested.
+
+          '
+        schema:
+          type: string
+          format: UUID
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiResponseOfferImportDto'
+        '400':
+          $ref: '#/components/responses/400'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '409':
+          $ref: '#/components/responses/409'
+        '417':
+          $ref: '#/components/responses/417'
+        '500':
+          $ref: '#/components/responses/500'
+        '503':
+          $ref: '#/components/responses/503'
+      security:
+      - bearer-key: []
+        api-key: []
+  /offers-v2:
+    post:
+      tags:
+      - Offers
+      summary: Create new offer
+      description: Use this resource to create a single new offer (item).
+      operationId: createNewOfferV2
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OfferV2Request'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OfferV2Response'
+        '400':
+          $ref: '#/components/responses/400'
+      security:
+      - bearer-key: []
+        api-key: []
+  /offers-v2/list:
+    get:
+      tags:
+      - Offers
+      summary: List user's offers
+      description: 'Use this resource to get current user''s paged offers.
+
+
+        ### Sorting and filtering
+
+
+        #### Sort
+
+        Sort query parameter must be in this format: **property_ORDER**. Order is
+        either ASC(ascending) or DESC(descending). The default sort returns items
+        from newest to oldest.
+
+
+        #### Status
+
+        The listed offers can be filtered by item states. Items can be in one of these
+        states: `ACTIVE`, `SCHEDULE`, `SCHEDULED_PUBLIC`, `SCHEDULED_ACTIVE` or `ENDED`.
+
+        The default option for filtering when status property is null or empty is
+        same as filtering by all states, so it returns every valid offer in the system
+        for a given user.
+
+        For example, when status is set to `ACTIVE` and `ENDED`, only active and ended
+        offers will be listed.
+
+        '
+      operationId: getOffersListV2
+      parameters:
+      - in: query
+        name: status
+        style: form
+        explode: true
+        schema:
+          type: array
+          uniqueItems: true
+          items:
+            $ref: '#/components/schemas/PublicApiItemStateEnum'
+      - in: query
+        name: page
+        schema:
+          title: number of page
+          type: integer
+          format: int32
+          default: 0
+          minimum: 0
+      - in: query
+        name: size
+        schema:
+          title: size of the page
+          type: integer
+          format: int32
+          default: 60
+          maximum: 60
+          minimum: 1
+      - in: query
+        name: sort
+        schema:
+          title: sort
+          type: array
+          items:
+            $ref: '#/components/schemas/OffersV2ListSortEnum'
+          default: itemId_DESC
+          uniqueItems: true
+      - $ref: '#/components/parameters/XAcceptLanguageHeader'
+      - $ref: '#/components/parameters/XAcceptCurrencyHeader'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OffersV2ListResponse'
+        '400':
+          $ref: '#/components/responses/400'
+      security:
+      - bearer-key: []
+        api-key: []
+  /categories:
+    get:
+      tags:
+      - Categories
+      summary: All Aukro categories
+      description: 'Provides all categories on Aukro with information about them.
+        Supports [ETag](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/ETag)
+
+        '
+      operationId: categoriesAll
+      parameters:
+      - $ref: '#/components/parameters/XAcceptLanguageHeader'
+      responses:
+        '200':
+          description: OK
+          headers:
+            ETag:
+              description: A unique identifier for the current version of the resource
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CategoriesResponse'
+        '304':
+          description: Not Modified
+          headers:
+            ETag:
+              description: A unique identifier for the current version of the resource
+              schema:
+                type: string
+        '400':
+          $ref: '#/components/responses/400'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '409':
+          $ref: '#/components/responses/409'
+        '417':
+          $ref: '#/components/responses/417'
+        '500':
+          $ref: '#/components/responses/500'
+        '503':
+          $ref: '#/components/responses/503'
+      security:
+      - bearer-key: []
+        api-key: []
+  /categories/{id}/attributes:
+    get:
+      tags:
+      - Categories
+      summary: Attributes for category
+      description: 'Find attributes for given category. Category must be leaf.
+
+        '
+      operationId: categoryAttributes
+      parameters:
+      - in: path
+        name: id
+        required: true
+        description: 'Id of the leaf category to find attributes for
+
+          '
+        schema:
+          type: integer
+          format: int64
+      - $ref: '#/components/parameters/XAcceptLanguageHeader'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CategoriesAttributesResponse'
+        '400':
+          $ref: '#/components/responses/400'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '409':
+          $ref: '#/components/responses/409'
+        '417':
+          $ref: '#/components/responses/417'
+        '500':
+          $ref: '#/components/responses/500'
+        '503':
+          $ref: '#/components/responses/503'
+      security:
+      - bearer-key: []
+        api-key: []
+  /packets:
+    post:
+      tags:
+      - Packets
+      summary: Create packet
+      description: "Order a packet shipment for the submitted order, provided the\
+        \ order’s shipping method is <i>Aukro shipping</i>.   \nPacket is created\
+        \ asynchronously, you will be informed about its progress by webhooks:\n<ul>\n\
+        \  <li><a href=\"#tag/Webhooks/operation/packetOrderedV1\">Packet - Ordered</a></li>\n\
+        \  <li><a href=\"#tag/Webhooks/operation/packetNewLabelV1\">Packet - New Label</a></li>\n\
+        \  <li><a href=\"#tag/Webhooks/operation/packetFailedV1\">Packet - Failed</a></li>\n\
+        </ul>\n"
+      operationId: postPackets
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PacketsRequest'
+        required: true
+      responses:
+        '200':
+          description: Packet has been initialized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PacketsResponse'
+        '400':
+          $ref: '#/components/responses/400'
+      security:
+      - bearer-key: []
+        api-key: []
+  /shipping-templates:
+    get:
+      tags:
+      - Shipping Templates
+      summary: My Shipping Templates
+      description: 'Get all shipping templates
+
+        '
+      operationId: getShippingTemplates
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetShippingTemplatesResponse'
+        '400':
+          $ref: '#/components/responses/400'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '409':
+          $ref: '#/components/responses/409'
+        '417':
+          $ref: '#/components/responses/417'
+        '500':
+          $ref: '#/components/responses/500'
+        '503':
+          $ref: '#/components/responses/503'
+      security:
+      - bearer-key: []
+        api-key: []
+  /images:
+    post:
+      tags:
+      - Offers
+      summary: Upload images
+      description: 'Use this resource to upload offer images binaries. Images have
+        to be uploaded before offer creation.
+
+
+        There is a limit of 24 images to be submitted at once and size limit of maximum
+        5MB per image.
+
+        '
+      operationId: uploadImages
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              required:
+              - images
+              properties:
+                images:
+                  type: array
+                  items:
+                    type: string
+                    description: images
+                    format: binary
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PublicApiImageDto'
+        '207':
+          description: At least one warning found
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PublicApiImageDto'
+        '400':
+          $ref: '#/components/responses/400'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '409':
+          $ref: '#/components/responses/409'
+        '417':
+          $ref: '#/components/responses/417'
+        '500':
+          $ref: '#/components/responses/500'
+        '503':
+          $ref: '#/components/responses/503'
+      security:
+      - bearer-key: []
+        api-key: []
+  /images/url:
+    post:
+      tags:
+      - Offers
+      summary: Upload images by URLs
+      description: "Use this resource to upload offer images by referencing publicly\
+        \ \naccessible resources. The reference is made by URL. Images have to be\
+        \ uploaded \nbefore offer creation.\n\nThere is a limit of 24 images to be\
+        \ submitted at once and size limit of maximum 5MB per image.\n"
+      operationId: uploadImagesUrl
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PublicApiRequestImageImportDto'
+        required: true
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PublicApiImageDto'
+        '207':
+          description: At least one warning found
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PublicApiImageDto'
+        '400':
+          $ref: '#/components/responses/400'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '409':
+          $ref: '#/components/responses/409'
+        '417':
+          $ref: '#/components/responses/417'
+        '500':
+          $ref: '#/components/responses/500'
+        '503':
+          $ref: '#/components/responses/503'
+      security:
+      - bearer-key: []
+        api-key: []
+  /authenticate:
+    post:
+      tags:
+      - Authentication
+      summary: Authenticate user
+      description: 'To use the authentication endpoint, you must provide your username
+        and password in the request body.
+
+        Once your credentials are validated, the endpoint generates a Bearer Token,
+        which is returned in the response body.
+
+        You must then include the Bearer Token in the header of subsequent requests
+        to protected API endpoints.
+
+        '
+      operationId: authenticate
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PublicLoginVM'
+        required: true
+      responses:
+        '200':
+          description: JWT token returned
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiJWTInfo'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          description: Authentication failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '409':
+          $ref: '#/components/responses/409'
+        '417':
+          $ref: '#/components/responses/417'
+        '500':
+          $ref: '#/components/responses/500'
+        '503':
+          $ref: '#/components/responses/503'
+      security:
+      - api-key: []
+  /webhook/settings:
+    post:
+      tags:
+      - Webhooks
+      summary: Create user webhook settings
+      description: 'Use this resource to create new webhook settings. If this is called
+        repeatedly,
+
+        the last data submitted are used.
+
+        '
+      operationId: createUserWebhookSettings
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserWebhookSettingsDto'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserWebhookSettingsDto'
+        '400':
+          $ref: '#/components/responses/400'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '409':
+          $ref: '#/components/responses/409'
+        '417':
+          $ref: '#/components/responses/417'
+        '500':
+          $ref: '#/components/responses/500'
+        '503':
+          $ref: '#/components/responses/503'
+      security:
+      - bearer-key: []
+        api-key: []
+    get:
+      tags:
+      - Webhooks
+      summary: Get user webhook settings
+      description: 'Use this resource to obtain current webhook settings.
+
+        '
+      operationId: getUserWebhookSettings
+      responses:
+        '200':
+          description: User webhook settings found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserWebhookSettingsDto'
+        '400':
+          $ref: '#/components/responses/400'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          description: User webhook settings not found
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+        '409':
+          $ref: '#/components/responses/409'
+        '417':
+          $ref: '#/components/responses/417'
+        '500':
+          $ref: '#/components/responses/500'
+        '503':
+          $ref: '#/components/responses/503'
+      security:
+      - bearer-key: []
+        api-key: []
+    delete:
+      tags:
+      - Webhooks
+      summary: Delete user webhook settings
+      description: 'Use this resource to effectively deactivate Webhooks. Note that
+        events occurring when Webhooks are not active are not available in any way
+        later
+
+        when Webhooks are reactivated!
+
+        '
+      operationId: deleteUserWebhookSettings
+      responses:
+        '200':
+          description: User webhook settings deleted
+        '400':
+          $ref: '#/components/responses/400'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '409':
+          $ref: '#/components/responses/409'
+        '417':
+          $ref: '#/components/responses/417'
+        '500':
+          $ref: '#/components/responses/500'
+        '503':
+          $ref: '#/components/responses/503'
+      security:
+      - bearer-key: []
+        api-key: []
+  /webhook/subscriptions:
+    post:
+      tags:
+      - Webhooks
+      summary: Create webhook subscriptions
+      description: 'Subscribe to webhook events. If this is called repeatedly, the
+        last data submitted are used.
+
+        '
+      operationId: postWebhooksSubscriptions
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WebhookSubscriptionsRequest'
+        required: true
+      responses:
+        '200':
+          description: Currently active webhook subscriptions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookSubscriptionsResponse'
+      security:
+      - bearer-key: []
+        api-key: []
+    get:
+      tags:
+      - Webhooks
+      summary: Get webhook subscriptions
+      description: 'List webhook events you are currently subscribed to.
+
+        '
+      operationId: getWebhooksSubscriptions
+      responses:
+        '200':
+          description: Currently active webhook subscriptions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookSubscriptionsResponse'
+      security:
+      - bearer-key: []
+        api-key: []
+  /webhook/event/failed/replay:
+    post:
+      tags:
+      - Webhooks
+      summary: Replay failed webhook events
+      description: 'Use this resource to replay Webhook events that have previously
+        failed to be delivered to third party.
+
+
+
+        For more information see [Recovering from a webhook URL dropout](/#recovering-from-a-webhook-url-dropout)
+        section.
+
+        '
+      operationId: replayFailedWebhookEvents
+      responses:
+        '202':
+          description: Events will be replayed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookEventReplayResult'
+        '403':
+          $ref: '#/components/responses/403'
+        '409':
+          $ref: '#/components/responses/409_webhook_settings_not_present'
+        '503':
+          $ref: '#/components/responses/503'
+      security:
+      - bearer-key: []
+        api-key: []
+  /webhook/event/failed/count:
+    get:
+      tags:
+      - Webhooks
+      summary: Count of events that failed to deliver
+      operationId: countFailedWebhookEvents
+      responses:
+        '200':
+          description: Count of failed events
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookEventCountResult'
+        '403':
+          $ref: '#/components/responses/403'
+        '409':
+          $ref: '#/components/responses/409_webhook_settings_not_present'
+        '503':
+          $ref: '#/components/responses/503'
+      security:
+      - bearer-key: []
+        api-key: []
+x-webhooks:
+  item-expired:
+    get:
+      tags:
+      - Webhooks
+      summary: Item Expired
+      operationId: itemExpired
+      description: 'Event `itemExpired_v1` occurs when the offer expires either time-wise
+        or the stock has been sold out. If it is an auction-type offer, it must be
+        fulfilled that no bid has been registered for it. Note at the end of the auction
+        with a bid, the `itemWon` event is generated.
+
+
+        Offers are terminated in batches at minute intervals. The event will contain
+        the id of all items that were terminated within a single batch.
+
+
+        As a result of the expiration, the offer ceases to be available for bidding
+        (in the case of auctions) or purchase (in the case of buy now).
+
+        '
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookEventItemExpired'
+      security: []
+  item-created-v1:
+    get:
+      tags:
+      - Webhooks
+      summary: Item Created
+      operationId: itemCreated
+      description: 'Event `itemCreated_v1` occurs when an offer is created i.e. offer
+        that entered Aukro system.
+
+        '
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookEventItemCreatedV1'
+      security: []
+  item-exposed-v1:
+    get:
+      tags:
+      - Webhooks
+      summary: Item Exposed
+      operationId: itemExposed
+      description: 'Event `itemExposed_v1` occurs when an offer is exposed i.e. offer
+        that transitioned to state `ACTIVE`.
+
+        '
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookEventItemExposedV1'
+      security: []
+  item-reexposed:
+    get:
+      tags:
+      - Webhooks
+      summary: Item Reexposed
+      operationId: itemReexposed
+      description: 'Event `itemReexposed_v1` occurs when the offer has been re-exposed.
+
+
+        Offers are re-exposed automatically if it is set by the parameters during
+        offer creation. The moment of automatic re-exposure is either when
+
+        their current lifecycle has reached an end (transition from `ACTIVE` to `ENDED`)
+        or the stock has been sold out.
+
+        '
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookEventItemReexposed'
+      security: []
+  item-won:
+    get:
+      tags:
+      - Webhooks
+      summary: Item Won
+      operationId: itemWon
+      description: 'Event `itemWon_v1` occurs when the duration of the auction offer
+        expires and at least one valid bid is recorded for it - this means that someone
+        won the auction (actually bought). Event is limited to auction with bids only.
+
+
+        It is true that for each auction at its end either an `itemExpired` event
+        (no bid) or an `itemWon` event (there is a bid) is generated.
+
+
+        Offers are terminated in batches at minute intervals. The event will contain
+        the ids of all auctions that ended in a win within one batch.
+
+
+        The details of who won the auction, how they wish to pay and ship the goods
+        are not part of this event (shipping and payment are not even known at that
+        time) and will be part of the `newOrderSubmitted` event.
+
+        '
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookEventItemWon'
+      security: []
+  item-won-expired:
+    get:
+      tags:
+      - Webhooks
+      summary: Item Won Expired
+      operationId: itemWonExpired
+      description: 'The `itemWonExpired_v1` event occurs when the time for the buyer
+        to complete the shipping and payment details for a winning auction expires.
+        This is a timed fallback to when the `newOrderSubmitted` event does not occur
+        due to the buyer not filling in the necessary data.
+
+
+        The event will only occur if the seller has set automatic withdrawal from
+        the contract, in accordance with Article 3.3.8 of the Aukra GTC. This event
+        can therefore occur no earlier than 7 days after the auction is won (`itemWon`).
+        However, within the setting of automatic withdrawal from the contract, the
+        seller can choose interval longer than 7 days.
+
+
+        Event is limited to auction with bids only.
+
+        '
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookEventItemWonExpired'
+      security: []
+  item-terminated:
+    get:
+      tags:
+      - Webhooks
+      summary: Item Terminated
+      operationId: itemTerminated
+      description: 'Event `itemTerminated_v1` occurs when an offer is terminated by
+        Aukro before the proper expiration time.
+
+
+        Offers can be terminated in bulk. In that case, the event will contain ids
+        of all offers that were terminated within one batch.
+
+
+        As a result of the termination, the offer ceases to be available for bidding
+        (in the case of auctions) or purchase (in the case of buy now).
+
+        '
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookEventItemTerminated'
+      security: []
+  new-order-submitted-v3:
+    get:
+      tags:
+      - Webhooks
+      summary: New Order Submitted v3
+      operationId: newOrderSubmittedV3
+      description: 'Event `newOrderSubmitted_v3` occurs when the user completes the
+        checkout process (shopping cart), the last step of which is the confirmation
+        of
+
+        sending the order. All currencies are those of the seller i.e. not the currencies
+        of the buyer.
+
+        '
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookEventNewOrderSubmittedV3'
+      security: []
+  order-stopped-by-buyer:
+    get:
+      tags:
+      - Webhooks
+      summary: Order - Stopped By Buyer
+      operationId: orderStoppedByBuyer
+      description: 'The `orderStoppedByBuyer_v1` event is triggered when the buyer
+        halts the order payment due to issues with the order that necessitate resolution
+
+        between the buyer and the seller. After the dispute is solved, state changes
+        based on the outcome of the dispute.
+
+        <br>
+
+        <br>
+
+        [Payment via Aukro FAQ](https://aukro.cz/kontakt/platba-pres-aukro-prodejce)
+
+        '
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookEventOrderStoppedByBuyerV1'
+      security: []
+  order-payment-returned-to-buyer:
+    get:
+      tags:
+      - Webhooks
+      summary: Order - Payment Returned To Buyer
+      operationId: orderPaymentReturnedToBuyer
+      description: 'The `orderPaymentReturnedToBuyer_v1` event is triggered when the
+        payment is returned to the buyer - seller does not receive money. This is
+        final
+
+        state of the order payment.
+
+        <br>
+
+        <br>
+
+        [Payment via Aukro FAQ](https://aukro.cz/kontakt/platba-pres-aukro-prodejce)
+
+        '
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookEventOrderPaymentReturnedToBuyerV1'
+      security: []
+  order-not-paid:
+    get:
+      tags:
+      - Webhooks
+      summary: Order - Not Paid
+      operationId: orderNotPaid
+      description: "The `orderNotPaid_v1` event is triggered when the order has not\
+        \ been paid by the buyer after elapsed time. The payment in no longer to be\
+        \ expected. \nThis is final state of the order payment.\n<br>\n<br>\n[Payment\
+        \ via Aukro FAQ](https://aukro.cz/kontakt/platba-pres-aukro-prodejce)\n"
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookEventOrderNotPaidV1'
+      security: []
+  order-received-payment-split:
+    get:
+      tags:
+      - Webhooks
+      summary: Order - Received Payment Split
+      operationId: orderReceivedPaymentSplit
+      description: 'The `orderReceivedPaymentSplit_v1` event is triggered when the
+        received order payment has been split between the buyer and the seller. This
+        is
+
+        final state of the order payment.
+
+        <br>
+
+        <br>
+
+        [Payment via Aukro FAQ](https://aukro.cz/kontakt/platba-pres-aukro-prodejce)
+
+        '
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookEventOrderReceivedPaymentSplitV1'
+      security: []
+  order-paid:
+    get:
+      tags:
+      - Webhooks
+      summary: Order - Paid
+      operationId: orderPaid
+      description: 'The `orderPaid_v1` event is triggered when Aukro receives payment
+        for the order.
+
+        <br>
+
+        <br>
+
+        [Payment via Aukro FAQ](https://aukro.cz/kontakt/platba-pres-aukro-prodejce)
+
+        '
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookEventOrderPaid'
+      security: []
+  order-received:
+    get:
+      tags:
+      - Webhooks
+      summary: Order - Received
+      operationId: orderReceived
+      description: 'The `orderReceived_v1` event occurs when buyer confirms that the
+        goods have arrived.
+
+        <br>
+
+        <br>
+
+        [Payment via Aukro FAQ](https://aukro.cz/kontakt/platba-pres-aukro-prodejce)
+
+        '
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookEventOrderReceived'
+      security: []
+  order-paid-out:
+    get:
+      tags:
+      - Webhooks
+      summary: Order - Paid Out
+      operationId: orderPaidOut
+      description: 'The `orderPaidOut_v1` event is triggered when the seller is about
+        to receive the payment for the order. This is final state of the order payment.
+
+        <br>
+
+        <br>
+
+        [Payment via Aukro FAQ](https://aukro.cz/kontakt/platba-pres-aukro-prodejce)
+
+        '
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookEventOrderPaidOutV1'
+      security: []
+  item-bid-v3:
+    get:
+      tags:
+      - Webhooks
+      summary: Item Bid v3
+      operationId: itemBidV3
+      description: 'Event `itemBid_v3` occurs when an offer is bid on. Currency of
+        the `amount` is the currency of the seller i.e. not the currency of the bidder.
+
+        '
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookEventItemBidV3'
+      security: []
+  cancel-bid-v2:
+    get:
+      tags:
+      - Webhooks
+      summary: Cancel Bid v2
+      operationId: cancelBidV2
+      description: 'Event `cancelBid_v2` occurs when a bid is cancelled. Currency
+        of the `currentPrice` is the currency of the seller i.e. not the currency
+        of
+
+        the bidder.
+
+        '
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookEventCancelBidV2'
+      security: []
+  packet-ordered-v1:
+    get:
+      tags:
+      - Webhooks
+      summary: Packet - Ordered
+      operationId: packetOrderedV1
+      description: 'Event `packetOrdered_v1` occurs when a packet has been successfully
+        registered at the carrier.
+
+        '
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookEventPacketOrderedV1'
+      security: []
+  packet-new-label-v1:
+    get:
+      tags:
+      - Webhooks
+      summary: Packet - New Label
+      operationId: packetNewLabelV1
+      description: 'Event `packetNewLabel_v1` occurs when the packet has received
+        a shipping label that needs to be attached to the packet.
+
+        '
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookEventPacketNewLabelV1'
+      security: []
+  packet-failed-v1:
+    get:
+      tags:
+      - Webhooks
+      summary: Packet - Failed
+      operationId: packetFailedV1
+      description: 'Event `packetFailed_v1` occurs when the packet could not be registered
+        at the carrier.
+
+        '
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookEventPacketFailedV1'
+      security: []
+components:
+  securitySchemes:
+    bearer-key:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: 'Bearer token in following format: Bearer [TOKEN]
+
+        '
+    api-key:
+      type: apiKey
+      name: X-Aukro-Api-Key
+      in: header
+      description: API Key from Aukro
+  schemas:
+    WebhookEventRoot:
+      type: object
+      properties:
+        eventId:
+          type: string
+          format: uuid
+        events:
+          type: array
+          items:
+            $ref: '#/components/schemas/WebhookEventWrapper'
+    OffersV2BulkRequest:
+      type: object
+      properties:
+        offers:
+          type: array
+          items:
+            $ref: '#/components/schemas/OffersV2BulkRequestElement'
+    OffersV2BulkResponse:
+      type: object
+      properties:
+        offers:
+          type: array
+          items:
+            $ref: '#/components/schemas/OffersV2BulkResponseElement'
+    PublicApiImageSizesUrl:
+      title: PublicApiImageSizesUrl
+      description: URLs of particular sizes of the image.
+      type: object
+      properties:
+        smallSizeUrl:
+          title: Small size url
+          type: string
+        mediumSizeUrl:
+          title: Medium size url
+          type: string
+        largeSizeUrl:
+          title: Large size url
+          type: string
+    OfferResponseImages:
+      type: object
+      properties:
+        title:
+          title: Is image a title image
+          type: boolean
+        sizes:
+          $ref: '#/components/schemas/PublicApiImageSizesUrl'
+    OfferResponseVideo:
+      type: object
+      required:
+      - url
+      description: 'Video for offer
+
+        '
+      properties:
+        url:
+          title: Video URL
+          type: string
+          format: url
+          description: 'URL of the video to be displayed with the offer.
+
+            '
+    PublicApiItemStateEnum:
+      title: status
+      type: string
+      enum:
+      - ACTIVE
+      - SCHEDULE
+      - ENDED
+      - SCHEDULED_PUBLIC
+      - SCHEDULED_ACTIVE
+    MonetaryAmount:
+      type: object
+      properties:
+        amount:
+          title: Amount of money in specified currency.
+          type: number
+        currency:
+          title: Three-character ISO-4217 currency code. Not all currencies are supported
+          type: string
+          minLength: 3
+          maxLength: 3
+    OfferResponseCategory:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+    OfferResponseLocation:
+      required:
+      - city
+      - countryCode
+      - postCode
+      type: object
+      properties:
+        city:
+          title: City
+          type: string
+        postCode:
+          title: Postal code
+          type: string
+        countryCode:
+          title: Country code
+          type: string
+    OfferResponseAttributes:
+      type: object
+      required:
+      - id
+      description: 'Attribute of offer. If the attribute is of type `combobox` or
+        `checkbox`, then the option selected for the attribute is in field `selectedId`.
+        If
+
+        the attribute is of any other type, then the user provided value is in field
+        `value`.
+
+        '
+      properties:
+        id:
+          title: Item attribute Id
+          type: integer
+          format: int64
+        value:
+          type: string
+        selectedId:
+          type: array
+          items:
+            title: Id of attribute value
+            type: integer
+            format: int64
+    OfferDataResponse:
+      type: object
+      properties:
+        itemId:
+          type: integer
+          format: int64
+          description: 'Id of offer.
+
+            '
+        itemExtId:
+          type: string
+          description: 'External Id of offer.
+
+            '
+        name:
+          type: string
+          description: 'Name of offer.
+
+            '
+        description:
+          type: string
+          description: 'Description of offer.
+
+            '
+        images:
+          type: array
+          items:
+            $ref: '#/components/schemas/OfferResponseImages'
+        videos:
+          type: array
+          items:
+            $ref: '#/components/schemas/OfferResponseVideo'
+        status:
+          $ref: '#/components/schemas/PublicApiItemStateEnum'
+        auctionPrice:
+          $ref: '#/components/schemas/MonetaryAmount'
+        buyNowPrice:
+          $ref: '#/components/schemas/MonetaryAmount'
+        retailPrice:
+          $ref: '#/components/schemas/MonetaryAmount'
+        availableQuantity:
+          type: integer
+          format: int32
+          description: 'Quantity that is currently available.
+
+            '
+        category:
+          type: array
+          items:
+            $ref: '#/components/schemas/OfferResponseCategory'
+        shippingTemplateId:
+          type: integer
+          format: int64
+          description: 'Shipping template Id.
+
+            '
+        duration:
+          type: integer
+          format: int64
+          description: 'Offer duration in days.
+
+            '
+        location:
+          $ref: '#/components/schemas/OfferResponseLocation'
+        attributes:
+          type: array
+          items:
+            $ref: '#/components/schemas/OfferResponseAttributes'
+        reexposeType:
+          type: integer
+          format: int64
+          description: 'Variant of reexpose setting.
+
+            '
+        startingAt:
+          type: string
+          format: date-time
+          description: 'Datetime when offer started / will start.
+
+            '
+        endingAt:
+          type: string
+          format: date-time
+          description: 'Datetime when offer ends.
+
+            '
+        createTime:
+          type: string
+          format: date-time
+          description: 'Datetime when offer entered Aukro system.
+
+            '
+        bestOffer:
+          type: boolean
+          description: 'Indicates whether best offer is enabled for this offer.
+
+            '
+        onlyVerifiedBuyersEnabledOverride:
+          type: boolean
+          description: 'Indicates whether the inversion of only verified buyer setting
+            is enabled.
+
+            '
+        priorityListing:
+          type: boolean
+          description: 'Indicates whether priority listing is enabled on this offer.
+
+            '
+        boldTitle:
+          type: boolean
+          description: 'Indicates whether bold title is enabled on this offer.
+
+            '
+        highlight:
+          type: boolean
+          description: 'Indicates whether highlight is enabled on this offer.
+
+            '
+    PublicApiItemAttributeDto:
+      required:
+      - id
+      type: object
+      description: 'It is used to fill in the parameters of the offer. There are different
+        parameters that must / can be filled in through the categories. There are
+        multiple attribute types. There are attributes where the value is created
+        by the user (e.g. product code) and the "value" parameter must be used. There
+        are also attributes where one or more values can be selected (e.g. product
+        status) and these are entered using the ID of the selected values in the "selectedId"
+        parameter.
+
+        '
+      properties:
+        id:
+          title: Item attribute Id
+          type: integer
+          format: int64
+          maxLength: 3
+          minLength: 3
+        value:
+          title: Attribute value
+          type: string
+          description: "Value set by seller. <br>\nIf not filled selectedId, then\
+            \ mandatory. \n"
+        selectedId:
+          type: array
+          description: 'ID of predefined attribute(s) values. <br>
+
+            If value is not filled, then mandatory. <br>
+
+            In the case of attributes that allow only a limited number of values,
+            there is validation for the amount as well.
+
+            '
+          items:
+            title: Id of attribute value
+            type: integer
+            format: int64
+    OffersQuantityUnitEnum:
+      title: Quantity unit
+      type: string
+      enum:
+      - PIECES
+      - SETS
+      - PAIRS
+    OffersV2PatchRequest:
+      type: object
+      properties:
+        name:
+          title: Offer name
+          type: string
+          nullable: true
+          minLength: 3
+          maxLength: 70
+          description: Name of the offer
+        description:
+          title: Multiline item description
+          type: string
+          nullable: true
+          description: It is created using a limited set of HTML tags in a defined
+            structure.  How to create an offer description is described in the chapter
+            [Offer description  format](/#tag/Offers/Offer-description).
+        additionalDescription:
+          title: Additional description
+          type: string
+          nullable: true
+          description: Text to append to description. Plain text only.
+        categoryId:
+          title: Item category
+          type: integer
+          format: int64
+          nullable: true
+          description: Id of an existing category on Aukro. The list of current categories
+            and their ids are available ( [here](https://aukro.cz/mapa-kategorii)
+            ). You can get IDs with endpoint ( [GET /categories](/#tag/Categories/operation/categoriesAll)
+            ).
+        attributes:
+          type: array
+          nullable: true
+          items:
+            $ref: '#/components/schemas/PublicApiItemAttributeDto'
+          description: 'List of offer attributes. Available attributes may differ
+            for different categories. At least mandatory attributes within the listed
+            category must be filled. You can get attributes for given category with
+            endpoint ( [GET /categories/{id}/attributes](#tag/Categories/operation/categoryAttributes)
+            ). '
+        auctionPrice:
+          nullable: true
+          allOf:
+          - $ref: '#/components/schemas/MonetaryAmount'
+        buyNowPrice:
+          nullable: true
+          allOf:
+          - $ref: '#/components/schemas/MonetaryAmount'
+        retailPrice:
+          nullable: true
+          allOf:
+          - $ref: '#/components/schemas/MonetaryAmount'
+        quantity:
+          title: Quantity
+          type: integer
+          format: int32
+          description: Value represents actual number of items available to sell.
+            Minimum value is 1.
+          nullable: true
+        quantityUnit:
+          nullable: true
+          allOf:
+          - $ref: '#/components/schemas/OffersQuantityUnitEnum'
+      description: Properties for PATCH operations on offer
+    ErrorSeverityEnum:
+      type: string
+      enum:
+      - INFO
+      - WARNING
+      - ERROR
+    RestErrorMessage:
+      type: object
+      properties:
+        severity:
+          $ref: '#/components/schemas/ErrorSeverityEnum'
+        message:
+          type: string
+          description: Description of the error.
+        code:
+          type: string
+          description: Code of the error.
+        field:
+          type: string
+          description: Field the error is related to.
+        additionalInfo:
+          type: string
+          description: Additional info about the error.
+    RestError:
+      type: object
+      properties:
+        uuid:
+          type: string
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/RestErrorMessage'
+        timestamp:
+          type: string
+          format: date
+    OfferTerminateRequest:
+      type: object
+      properties:
+        auctionCancelBids:
+          description: For auctions only. Defaults to `false` i.e. existing bids won't
+            be cancelled and auction will be evaluated.
+          type: boolean
+          nullable: true
+        auctionCancelBidsReason:
+          description: For auctions only. Required when `auctionCancelBids` is `true`.
+          type: string
+          nullable: true
+          minLength: 3
+          maxLength: 150
+    PublicApiResponseOfferFormDto:
+      type: object
+      properties:
+        entityId:
+          type: integer
+          format: int64
+          description: 'Id of a single CSV record, that this object refers to. CSV
+            records are explicitly identified
+
+            to provide exact feedback.
+
+            '
+        offerId:
+          type: integer
+          format: int64
+          description: "Id of offer that was created during an import. This id shall\
+            \ be used in any \nsubsequent manipulation with this offer.\n"
+        status:
+          type: string
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/RestErrorMessage'
+      description: Response DTO of imported offer
+    PublicApiResponseOfferImportDto:
+      type: object
+      properties:
+        code:
+          title: Id of import
+          type: string
+          format: UUID
+          description: Import Id that can be used to get its status.
+        offers:
+          type: array
+          description: 'List of statuses of particular import items.
+
+            '
+          items:
+            $ref: '#/components/schemas/PublicApiResponseOfferFormDto'
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/RestErrorMessage'
+      description: Response DTO with offer data for public API
+    OfferV2RequestLocation:
+      required:
+      - city
+      - countryCode
+      - postCode
+      type: object
+      description: 'Determines where the seller is from. It is used when searching
+        for the user''s offers in his area and also in case the seller provides personal
+        collection.
+
+        '
+      properties:
+        city:
+          title: City
+          maxLength: 150
+          minLength: 2
+          pattern: '[\p{L}\d.''\s\-\u2013/]+'
+          type: string
+        postCode:
+          title: Postal code
+          type: string
+          description: 'Postal code with correct format in respect to the provided
+            country
+
+            '
+        countryCode:
+          title: Country code
+          type: string
+          maxLength: 2
+          minLength: 2
+          description: 'Country code, currently only CZ, SK and PL are allowed
+
+            '
+    OfferV2RequestAttributes:
+      required:
+      - id
+      type: object
+      description: 'Used to fill in the attributes of the offer. There are different
+        attributes that must / can be filled in through the categories. There are
+
+        multiple attribute types. There are attributes where the value is created
+        by the user (for e.g. product code) and the "value" parameter must be used.
+
+        There are also attributes where one or more values can be selected (for e.g.
+        product status) and these are entered using the ID of the selected
+
+        values in the "selectedId" parameter.
+
+        '
+      properties:
+        id:
+          title: Item attribute Id
+          type: integer
+          format: int64
+        value:
+          title: Attribute value
+          type: string
+          description: 'Custom attribute value. Use this field for attributes of type:
+            `string`, `integer`, `float`, `tag`.
+
+            '
+        selectedId:
+          type: array
+          description: 'Id(s) of predefined attribute values. Use this field for attributes
+            of type: `combobox` or `checkbox`
+
+            '
+          items:
+            title: Id of attribute value
+            type: integer
+            format: int64
+    OfferV2RequestImage:
+      type: object
+      description: 'Image for offer. Either `id` or `url` is required. They are both
+        mutually exclusive.
+
+        '
+      properties:
+        id:
+          title: Image id
+          type: integer
+          format: int64
+          description: 'Id of image obtained from response of `/images` endpoint
+
+            '
+        url:
+          title: Image URL
+          type: string
+          format: url
+          description: 'URL of image that will be downloaded
+
+            '
+    OfferV2RequestVideo:
+      type: object
+      required:
+      - url
+      description: 'Video for offer
+
+        '
+      properties:
+        url:
+          title: Video URL
+          type: string
+          format: url
+          description: 'URL of the video to be displayed with the offer.
+
+            '
+    OfferV2Request:
+      required:
+      - name
+      - language
+      - description
+      - quantity
+      - categoryId
+      - shippingTemplateId
+      - duration
+      - images
+      - location
+      type: object
+      properties:
+        name:
+          title: Offer name
+          type: string
+          minLength: 3
+          maxLength: 70
+          description: Name of the offer
+        description:
+          title: Multiline offer description
+          type: string
+          description: It is created using a limited set of HTML tags in a defined
+            structure.  How to create an offer description is described in the chapter
+            Offer description  format.
+        language:
+          type: string
+          format: BCP-47 standard
+          description: Primary language of the offer
+        auctionPrice:
+          $ref: '#/components/schemas/MonetaryAmount'
+        buyNowPrice:
+          $ref: '#/components/schemas/MonetaryAmount'
+        retailPrice:
+          $ref: '#/components/schemas/MonetaryAmount'
+        quantity:
+          title: Number of items in stock.
+          type: integer
+          minimum: 1
+          description: Auctions or Combined offers must have value of 1 only.
+          format: int32
+        categoryId:
+          title: Offer category
+          type: integer
+          description: Id of an existing category on Aukro. The list of current categories
+            and their ids are available ( [here](https://aukro.cz/mapa-kategorii)
+            ). You can get IDs with endpoint ( [GET /categories](/#tag/Categories/operation/categoriesAll)
+            ).
+          format: int64
+        shippingTemplateId:
+          title: Id of predefined delivery price list
+          type: integer
+          format: int64
+          description: Id of a shipping template associated with the user account
+            to be used for shipping option for the created offer. Shipping templates
+            are managed via web in ( [Moje Aukro administration section](https://aukro.cz/moje-aukro/muj-prodej/sablona-prepravy)
+            ),   you can also get ID of shipping template there. You can get IDs with
+            endpoint ( [GET  shipping-templates](#tag/Shipping-Templates/operation/getShippingTemplates)
+            ).
+        duration:
+          title: Offer exposure length
+          type: integer
+          format: int64
+          description: Possible values are 3, 5, 7, 10 or 30. The value 30 can only
+            be used for a buy now only offer.
+        location:
+          $ref: '#/components/schemas/OfferV2RequestLocation'
+        attributes:
+          type: array
+          items:
+            $ref: '#/components/schemas/OfferV2RequestAttributes'
+          description: 'List of offer attributes. Available attributes differ for
+            different categories. At least mandatory attributes within the listed
+            category must
+
+            be filled. You can get attributes for given category with endpoint ([GET
+            /categories/{id}/attributes](#tag/Categories/operation/categoryAttributes)
+            ).
+
+            '
+        reexposeType:
+          title: Item reexpose type
+          description: "Possible values are 0, 1 or 2. \n\nValue 0: No auto-renew/re-expose.\n\
+            \nValue 1: Auction will be prolonged until it is won. After that the same\
+            \ offer \nis listed as new one. The buy-now offer will be relisted with\
+            \ the original quantity\nafter it's sold out.  \n\nValue 2: Auction will\
+            \ be prolonged until it is won. After that no action\nis done. The buy-now\
+            \ offer will be prolonged with remaining units until it's\nsold out.\"\
+            \n"
+          type: integer
+          format: int64
+        startingAt:
+          title: date and time when the offer will be made publicly available
+          description: If not present, then activation is immediate. Otherwise, it
+            must specify a moment in the future when the offer is to be made public.
+          type: string
+          format: date-time
+        bestOffer:
+          title: Indicates whether the offer has enabled best offer feature
+          type: boolean
+          description: 'Best offer feature enables buyer to offer a price to the seller  even
+            if the offer is still running. By auctions the possibility to offer a
+            price is withdrawn after the first bid is placed.
+
+            The licitation between seller and buyer is done via web in Moje Aukro
+            administration section and is not supported by this API at the moment.'
+        onlyVerifiedBuyersEnabledOverride:
+          title: Inverts global only verified buyers enabled setting
+          type: boolean
+          description: Overrides the setting that, when set, allows only verified
+            buyers who have their account fully activated to make bids and purchases
+            on current user's offers. If override is set to true, it INVERTS this
+            setting for this offer only.
+        images:
+          type: array
+          items:
+            $ref: '#/components/schemas/OfferV2RequestImage'
+          minItems: 1
+          maxItems: 24
+          description: Images for this offer. Number of images depends on category
+            where offer is exposed. Available on EP <a href="/#tag/Categories/operation/categoriesAll"><strong>GET
+            /categories</strong></a>
+        videos:
+          type: array
+          items:
+            $ref: '#/components/schemas/OfferV2RequestVideo'
+          minItems: 0
+          maxItems: 1
+          description: 'Optional list of videos for the offer. A maximum of one video
+            is allowed. Only YouTube videos are supported. Video usage requires user-account
+
+            flag to be enabled.
+
+            '
+        priorityListing:
+          title: Priority listing
+          type: boolean
+          default: false
+          description: Indicates whether the offer should be listed with priority.
+            Service is [charged](https://aukro.cz/stranka/propagace-a-vylepsovani-nabidek).
+        boldTitle:
+          title: Bold title
+          type: boolean
+          default: false
+          description: Indicates whether the offer should be listed with a bold title.
+            Service is [charged](https://aukro.cz/stranka/propagace-a-vylepsovani-nabidek).
+        highlight:
+          title: Highlight
+          type: boolean
+          default: false
+          description: Indicates whether the offer should be highlighted. Service
+            is [charged](https://aukro.cz/stranka/propagace-a-vylepsovani-nabidek).
+      description: Request DTO with offer data for public API
+    OfferV2ResponseAttributes:
+      type: object
+      required:
+      - id
+      description: 'Attribute of offer. If the attribute is of type `combobox` or
+        `checkbox`, then the option selected for the attribute is in field `selectedId`.
+        If
+
+        the attribute is of any other type, then the user provided value is in field
+        `value`.
+
+        '
+      properties:
+        id:
+          title: Item attribute Id
+          type: integer
+          format: int64
+        value:
+          type: string
+        selectedId:
+          type: array
+          items:
+            title: Id of attribute value
+            type: integer
+            format: int64
+    OfferV2ResponseImages:
+      type: object
+      properties:
+        imageId:
+          title: Image id
+          description: Image ID is required when creating new offer.
+          type: integer
+          format: int64
+        sizes:
+          $ref: '#/components/schemas/PublicApiImageSizesUrl'
+    OfferV2Response:
+      required:
+      - categoryId
+      - description
+      - duration
+      - location
+      - name
+      - shippingTemplateId
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          title: Offer name
+          type: string
+        description:
+          title: Multiline offer description
+          type: string
+        auctionPrice:
+          $ref: '#/components/schemas/MonetaryAmount'
+        buyNowPrice:
+          $ref: '#/components/schemas/MonetaryAmount'
+        retailPrice:
+          $ref: '#/components/schemas/MonetaryAmount'
+        quantity:
+          title: Stock items
+          type: integer
+          format: int32
+        categoryId:
+          title: Item category
+          type: integer
+          format: int64
+        shippingTemplateId:
+          title: Id of predefined delivery price list
+          type: integer
+          format: int64
+        duration:
+          title: Offer exposure length
+          type: integer
+          format: int64
+        location:
+          $ref: '#/components/schemas/OfferResponseLocation'
+        attributes:
+          type: array
+          items:
+            $ref: '#/components/schemas/OfferV2ResponseAttributes'
+        reexposeType:
+          title: Item reexpose type
+          type: integer
+          format: int64
+        startingAt:
+          title: Specifies activation date, if late activation is selected. If null
+            then activation is immediate.
+          type: string
+          format: date-time
+        bestOffer:
+          title: Indicates whether the item has enabled best offer feature
+          type: boolean
+        onlyVerifiedBuyersEnabled:
+          title: Only verified user can bid on or buy this offer
+          type: boolean
+        priorityListing:
+          title: Indicates whether the offer will be listed with priority.
+          type: boolean
+        boldTitle:
+          title: Indicates whether the offer will be listed with a bold title.
+          type: boolean
+        highlight:
+          title: Indicates whether the offer will be highlighted.
+          type: boolean
+        images:
+          type: array
+          items:
+            $ref: '#/components/schemas/OfferV2ResponseImages'
+        videos:
+          type: array
+          items:
+            $ref: '#/components/schemas/OfferResponseVideo'
+      description: Response DTO with offer data for public API
+    OffersV2ListSortEnum:
+      title: sort
+      type: string
+      enum:
+      - itemId_DESC
+      - itemId_ASC
+    OffersV2ListResponseElement:
+      type: object
+      required:
+      - itemId
+      - name
+      - availableQuantity
+      - status
+      - images
+      - createTime
+      properties:
+        itemId:
+          type: integer
+          format: int64
+        name:
+          type: string
+        auctionPrice:
+          $ref: '#/components/schemas/MonetaryAmount'
+        buyNowPrice:
+          $ref: '#/components/schemas/MonetaryAmount'
+        availableQuantity:
+          title: Stock items
+          type: integer
+          format: int32
+        attributes:
+          type: array
+          items:
+            $ref: '#/components/schemas/OfferResponseAttributes'
+        itemExtId:
+          type: string
+        status:
+          $ref: '#/components/schemas/PublicApiItemStateEnum'
+        images:
+          type: array
+          items:
+            $ref: '#/components/schemas/OfferResponseImages'
+          description: 'Offer''s images
+
+            '
+        videos:
+          type: array
+          items:
+            $ref: '#/components/schemas/OfferResponseVideo'
+          description: 'Offer''s videos
+
+            '
+        createTime:
+          title: Create time
+          type: string
+          format: date-time
+    Page:
+      type: object
+      properties:
+        number:
+          type: integer
+          format: int32
+        size:
+          type: integer
+          format: int32
+        totalElements:
+          type: integer
+          format: int64
+        totalPages:
+          type: integer
+          format: int32
+      description: Object detailing paging info of response
+    OffersV2ListResponse:
+      type: object
+      properties:
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/OffersV2ListResponseElement'
+        page:
+          $ref: '#/components/schemas/Page'
+      description: Response with offers belonging to a current user
+    CategoryData:
+      type: object
+      required:
+      - id
+      - name
+      - root
+      - leaf
+      - active
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: 'Id of category
+
+            '
+        name:
+          type: string
+          description: 'Name of category
+
+            '
+        root:
+          type: boolean
+          description: 'Indicates if this category is root category i.e. category
+            has no parent.
+
+            '
+        leaf:
+          type: boolean
+          description: 'Indicates if this category is leaf category i.e. category
+            has no children. Offers can be exposed to leaf categories only (must also
+            be active)
+
+            '
+        active:
+          type: boolean
+          description: 'Indicates if category is active and offer can be exposed in
+            it (must also be leaf)
+
+            '
+        parentCategoryId:
+          title: Id of parent category
+          type: integer
+          format: int64
+          description: 'Id of category
+
+            '
+        maxItemImages:
+          type: integer
+          description: 'Maximum number of images that offer in this category can have.
+
+            '
+    CategoriesResponse:
+      type: object
+      properties:
+        categories:
+          type: array
+          items:
+            $ref: '#/components/schemas/CategoryData'
+    CategoryAttributeValueConstraintsBase:
+      type: object
+      required:
+      - type
+      properties:
+        type:
+          type: string
+          description: Type of attribute
+    CategoryAttributeValueConstraintsString:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/CategoryAttributeValueConstraintsBase'
+      properties:
+        length:
+          type: integer
+    CategoryAttributeValueConstraintsInteger:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/CategoryAttributeValueConstraintsBase'
+      properties:
+        rangeMin:
+          type: integer
+          format: int32
+        rangeMax:
+          type: integer
+          format: int32
+    CategoryAttributeValueConstraintsFloat:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/CategoryAttributeValueConstraintsBase'
+      properties:
+        rangeMin:
+          type: integer
+          format: int32
+        rangeMax:
+          type: integer
+          format: int32
+    CategoryAttributeValueOptionData:
+      type: object
+      properties:
+        optionId:
+          type: integer
+          format: int64
+        name:
+          type: string
+    CategoryAttributeValueConstraintsCombobox:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/CategoryAttributeValueConstraintsBase'
+      properties:
+        options:
+          type: array
+          items:
+            $ref: '#/components/schemas/CategoryAttributeValueOptionData'
+    CategoryAttributeValueConstraintsCheckbox:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/CategoryAttributeValueConstraintsBase'
+      properties:
+        options:
+          type: array
+          items:
+            $ref: '#/components/schemas/CategoryAttributeValueOptionData'
+    CategoryAttributeValueConstraintsTag:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/CategoryAttributeValueConstraintsBase'
+      properties:
+        length:
+          type: integer
+    CategoryAttributeData:
+      type: object
+      required:
+      - id
+      - name
+      - mandatory
+      - valueConstraints
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: 'Id of attribute
+
+            '
+        name:
+          type: string
+          description: 'Name of attribute
+
+            '
+        mandatory:
+          type: boolean
+          description: 'Indicates if this attribute is mandatory
+
+            '
+        companyOnly:
+          type: boolean
+          description: 'Indicates if this attribute is only for company accounts
+
+            '
+        valueConstraints:
+          type: object
+          oneOf:
+          - $ref: '#/components/schemas/CategoryAttributeValueConstraintsString'
+          - $ref: '#/components/schemas/CategoryAttributeValueConstraintsInteger'
+          - $ref: '#/components/schemas/CategoryAttributeValueConstraintsFloat'
+          - $ref: '#/components/schemas/CategoryAttributeValueConstraintsCombobox'
+          - $ref: '#/components/schemas/CategoryAttributeValueConstraintsCheckbox'
+          - $ref: '#/components/schemas/CategoryAttributeValueConstraintsTag'
+          discriminator:
+            propertyName: type
+            mapping:
+              string: '#/components/schemas/CategoryAttributeValueConstraintsString'
+              integer: '#/components/schemas/CategoryAttributeValueConstraintsInteger'
+              float: '#/components/schemas/CategoryAttributeValueConstraintsFloat'
+              combobox: '#/components/schemas/CategoryAttributeValueConstraintsCombobox'
+              checkbox: '#/components/schemas/CategoryAttributeValueConstraintsCheckbox'
+              tag: '#/components/schemas/CategoryAttributeValueConstraintsTag'
+    CategoriesAttributesResponse:
+      type: object
+      properties:
+        attributes:
+          type: array
+          items:
+            $ref: '#/components/schemas/CategoryAttributeData'
+    PacketsRequestHandoverDetail:
+      type: object
+      required:
+      - address
+      - city
+      - postCode
+      - country
+      - phone
+      description: 'Shipping handover details in case shipping is <i>PPL via Aukro</i>
+        or <i>Zaslat via Aukro</i>.
+
+        Provide the handover party’s information by populating either the `company`
+        field or both the `firstName` and `lastName` fields (individual).
+
+        Including `company` alongside `firstName`/`lastName` is optional.
+
+        '
+      properties:
+        firstName:
+          type: string
+          minLength: 1
+          maxLength: 150
+        lastName:
+          type: string
+          minLength: 1
+          maxLength: 150
+        company:
+          type: string
+          minLength: 1
+          maxLength: 150
+        address:
+          type: string
+          minLength: 1
+          maxLength: 150
+        city:
+          type: string
+          minLength: 1
+          maxLength: 150
+        postCode:
+          type: string
+          description: Post code in given `country`
+          minLength: 1
+          maxLength: 12
+        country:
+          type: string
+          description: ISO 3166-1 alpha-2 Country code
+          minLength: 2
+          maxLength: 2
+        phone:
+          type: string
+          minLength: 6
+          maxLength: 40
+    PacketsRequest:
+      required:
+      - orderId
+      type: object
+      description: Request schema for Packet creation
+      properties:
+        orderId:
+          title: Order id
+          type: integer
+          format: int64
+          description: Order id for which to create Packet
+        handoverDetail:
+          $ref: '#/components/schemas/PacketsRequestHandoverDetail'
+    PacketsResponse:
+      type: object
+      required:
+      - id
+      properties:
+        id:
+          title: Packet id
+          type: integer
+          format: int64
+          description: Unique identification of the given Packet assigned by Aukro
+    ShippingTemplateData:
+      description: Represent shipping template
+      type: object
+      properties:
+        id:
+          title: Id of this shipping template
+          type: integer
+          format: int64
+        name:
+          title: Name of this shipping template
+          type: string
+    GetShippingTemplatesResponse:
+      type: object
+      properties:
+        templates:
+          type: array
+          items:
+            $ref: '#/components/schemas/ShippingTemplateData'
+    PublicApiImageDto:
+      type: object
+      properties:
+        imageId:
+          title: Image id
+          description: Image ID is required when creating new offer.
+          type: integer
+          format: int64
+        sizes:
+          $ref: '#/components/schemas/PublicApiImageSizesUrl'
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/RestErrorMessage'
+    PublicApiRequestImageImportDto:
+      required:
+      - imagesUrl
+      type: object
+      properties:
+        imagesUrl:
+          title: Images URL
+          description: All image URLs have to be publicly accessible.
+          type: array
+          items:
+            type: string
+      description: Contains URLs of images
+    PublicLoginVM:
+      required:
+      - password
+      - username
+      type: object
+      properties:
+        username:
+          title: username
+          maxLength: 100
+          minLength: 2
+          pattern: ^(!g_)?[:'@.a-zA-Z0-9_\-+]+$
+          type: string
+        password:
+          title: password
+          type: string
+    PublicApiJWTInfo:
+      type: object
+      properties:
+        token:
+          title: token
+          type: string
+    DefaultMessageSourceResolvable:
+      type: object
+      properties:
+        codes:
+          type: array
+          items:
+            type: string
+        arguments:
+          type: array
+          items:
+            type: object
+        defaultMessage:
+          type: string
+        code:
+          type: string
+    ObjectError:
+      type: object
+      properties:
+        codes:
+          type: array
+          items:
+            type: string
+        arguments:
+          type: array
+          items:
+            type: object
+        defaultMessage:
+          type: string
+        objectName:
+          type: string
+        code:
+          type: string
+    FieldError:
+      type: object
+      properties:
+        codes:
+          type: array
+          items:
+            type: string
+        arguments:
+          type: array
+          items:
+            type: object
+        defaultMessage:
+          type: string
+        objectName:
+          type: string
+        field:
+          type: string
+        rejectedValue:
+          type: object
+        bindingFailure:
+          type: boolean
+        code:
+          type: string
+    ValidationError:
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/DefaultMessageSourceResolvable'
+        objects:
+          type: array
+          items:
+            $ref: '#/components/schemas/ObjectError'
+        fields:
+          type: array
+          items:
+            $ref: '#/components/schemas/FieldError'
+        errorMessage:
+          type: string
+    UserWebhookSettingsDto:
+      required:
+      - secretKey
+      - webhookUrl
+      type: object
+      properties:
+        secretKey:
+          title: Secret key
+          type: string
+          description: 'Third party secret that is submitted with every webhook call
+            from Aukro. This
+
+            secret is set to `Authorization` HTTP header.
+
+            '
+        webhookUrl:
+          title: Webhook url
+          type: string
+          description: 'URL to be called by Aukro servers to pass a notification on
+
+            event that have occured.
+
+            '
+        notes:
+          title: Webhook notes
+          type: string
+          description: User's note. It is not processed anyhow.
+        secretKeyExpiration:
+          title: Secret Key Expiration
+          description: Date when secret key expires
+          type: string
+          format: date-time
+        secretKeyExpirationContactEmail:
+          title: Secret Key Expiration Contact Email
+          description: Email address where notification about secret key expiration
+            is sent to. If not specified, notification is sent to email address associated
+            with Aukro account.
+          type: string
+      description: User webhook settings data
+    WebhookEventEnum:
+      type: string
+      enum:
+      - itemExpired
+      - itemCreated
+      - itemExposed
+      - itemWon
+      - itemTerminated
+      - newOrderSubmitted
+      - itemWonExpired
+      - orderStoppedByBuyer
+      - orderPaymentReturnedToBuyer
+      - orderNotPaid
+      - orderReceivedPaymentSplit
+      - orderPaid
+      - orderReceived
+      - orderPaidOut
+      - itemBid
+      - itemReexposed
+      - cancelBid
+      - packetOrdered
+      - packetNewLabel
+      - packetFailed
+    WebhookSubscriptionsResponse:
+      type: object
+      required:
+      - events
+      properties:
+        events:
+          type: array
+          description: Array of webhook events you are subscribed to.
+          uniqueItems: true
+          items:
+            $ref: '#/components/schemas/WebhookEventEnum'
+    WebhookSubscriptionsRequest:
+      type: object
+      required:
+      - events
+      properties:
+        events:
+          type: array
+          description: Array of webhook events to subscribe to. Empty array indicates
+            no subscription.
+          uniqueItems: true
+          items:
+            $ref: '#/components/schemas/WebhookEventEnum'
+    WebhookEventReplayResult:
+      type: object
+      properties:
+        replayCount:
+          title: Maximum count of failed events that can be replayed
+          description: "This is Aukro environment property and may differ over time\
+            \ depending on current\ntraffic load. \n"
+          type: integer
+          format: int32
+        replayedCount:
+          title: Count of failed events that were replayed
+          description: 'If the `replayCount` equals to `replayedCount`, it is recommended
+            to repeat the call, as there can be more undelivered events.
+
+            '
+          type: integer
+          format: int32
+    WebhookEventCountResult:
+      type: object
+      properties:
+        count:
+          type: integer
+          format: int32
+    WebhookEventTypeEnum:
+      type: string
+      enum:
+      - itemExpired_v1
+      - itemCreated_v1
+      - itemExposed_v1
+      - itemWon_v1
+      - itemTerminated_v1
+      - newOrderSubmitted_v3
+      - itemWonExpired_v1
+      - orderStoppedByBuyer_v1
+      - orderPaymentReturnedToBuyer_v1
+      - orderNotPaid_v1
+      - orderReceivedPaymentSplit_v1
+      - orderPaid_v1
+      - orderReceived_v1
+      - orderPaidOut_v1
+      - itemBid_v3
+      - itemReexposed_v1
+      - cancelBid_v2
+      - packetOrdered_v1
+      - packetNewLabel_v1
+      - packetFailed_v1
+    WebhookEventItemExpired:
+      required:
+      - itemIds
+      type: object
+      properties:
+        itemIds:
+          title: ItemIdX
+          type: array
+          items:
+            type: integer
+            format: int64
+          description: 'Ids of the items that ended. In case of buy now, item''s lifecycle
+            has ended. In case of auction, it had no bids.
+
+            '
+    WebhookEventItemCreatedV1:
+      required:
+      - itemIds
+      type: object
+      properties:
+        itemIds:
+          title: Item Ids
+          type: array
+          items:
+            type: integer
+            format: int64
+          description: 'Ids of the items that were created i.e. items that entered
+            Aukro system.
+
+            '
+    WebhookEventItemExposedV1:
+      required:
+      - itemId
+      type: object
+      properties:
+        itemId:
+          title: Item Id
+          type: integer
+          format: int64
+          description: 'Id of the item that was exposed i.e. item that transitioned
+            to state ''ACTIVE''.
+
+            '
+    WebhookEventItemWon:
+      required:
+      - buyerEmail
+      - orderItemId
+      - itemId
+      type: object
+      properties:
+        orderItems:
+          type: array
+          items:
+            type: object
+            properties:
+              buyerEmail:
+                type: string
+                description: 'Winner''s email address
+
+                  '
+              orderItemId:
+                type: integer
+                format: int64
+                description: 'Order Item ID (even though the order does not exist
+                  as such) - this ID will then appear in the orderItems property of
+                  the OrderDto order object when the user creates this order (OrderDto
+                  forms the event payload newOrderSubmitted)
+
+                  '
+              itemId:
+                type: integer
+                format: int64
+                description: 'The Id of the auction that ended in a win
+
+                  '
+          description: 'ID of the bid that ended and, in the case of an auction, did
+            not end in a win
+
+            '
+    WebhookEventItemTerminated:
+      required:
+      - itemIds
+      type: object
+      properties:
+        itemIds:
+          title: ItemIdX
+          type: array
+          items:
+            type: integer
+            format: int64
+          description: 'Ids of offers that were terminated by Aukro
+
+            '
+    ShippingMethodCodeEnum:
+      type: string
+      enum:
+      - AUKRO_BALIKOVNA
+      - AUKRO_BALIKOVNA_ADDRESS
+      - AUKRO_PPL_ADDRESS_CZ_AT
+      - AUKRO_PPL_ADDRESS_CZ_CZ
+      - AUKRO_PPL_ADDRESS_CZ_DE
+      - AUKRO_PPL_ADDRESS_CZ_HU
+      - AUKRO_PPL_ADDRESS_CZ_PL
+      - AUKRO_PPL_ADDRESS_CZ_SI
+      - AUKRO_PPL_ADDRESS_CZ_SK
+      - AUKRO_PPL_VM_CZ_CZ
+      - AUKRO_PPL_VM_CZ_DE
+      - AUKRO_PPL_VM_CZ_PL
+      - AUKRO_PPL_VM_CZ_SK
+      - AUKRO_ZASILKOVNA
+      - AUKRO_ZASILKOVNA_ADDRESS
+      - AUKRO_ZASILKOVNA_ADDRESS_CZ_AT
+      - AUKRO_ZASILKOVNA_ADDRESS_CZ_DE
+      - AUKRO_ZASILKOVNA_ADDRESS_CZ_SK
+      - AUKRO_ZASILKOVNA_ADDRESS_HU_AT
+      - AUKRO_ZASILKOVNA_ADDRESS_HU_CZ
+      - AUKRO_ZASILKOVNA_ADDRESS_HU_DE
+      - AUKRO_ZASILKOVNA_ADDRESS_HU_SK
+      - AUKRO_ZASILKOVNA_ADDRESS_SK_AT
+      - AUKRO_ZASILKOVNA_ADDRESS_SK_CZ
+      - AUKRO_ZASILKOVNA_ADDRESS_SK_DE
+      - AUKRO_ZASILKOVNA_ADDRESS_SK_SK
+      - AUKRO_ZASILKOVNA_CZ_HR
+      - AUKRO_ZASILKOVNA_CZ_HU
+      - AUKRO_ZASILKOVNA_CZ_PL
+      - AUKRO_ZASILKOVNA_CZ_SI
+      - AUKRO_ZASILKOVNA_CZ_SK
+      - AUKRO_ZASILKOVNA_HU_CZ
+      - AUKRO_ZASILKOVNA_HU_HR
+      - AUKRO_ZASILKOVNA_HU_HU
+      - AUKRO_ZASILKOVNA_HU_PL
+      - AUKRO_ZASILKOVNA_HU_SI
+      - AUKRO_ZASILKOVNA_HU_SK
+      - AUKRO_ZASILKOVNA_SK_CZ
+      - AUKRO_ZASILKOVNA_SK_HR
+      - AUKRO_ZASILKOVNA_SK_HU
+      - AUKRO_ZASILKOVNA_SK_PL
+      - AUKRO_ZASILKOVNA_SK_SI
+      - AUKRO_ZASILKOVNA_SK_SK
+      - AUKRO_ZASLAT_M_CZ_CZ
+      - AUKRO_ZASLAT_S_CZ_CZ
+      - COURIER
+      - COURIER_CASH_ON_DELIVERY
+      - COURIER_CZ_AT
+      - COURIER_CZ_DE
+      - COURIER_CZ_HR
+      - COURIER_CZ_HU
+      - COURIER_CZ_PL
+      - COURIER_CZ_SI
+      - COURIER_CZ_SK
+      - COURIER_SK_ALL
+      - COURIER_SK_AT
+      - COURIER_SK_CZ
+      - COURIER_SK_DE
+      - COURIER_SK_HR
+      - COURIER_SK_HU
+      - COURIER_SK_PL
+      - COURIER_SK_SI
+      - COURIER_SK_SK
+      - E-MAIL
+      - PACKAGE_STANDARD
+      - PACKAGE_TO_HAND
+      - PACKAGE_TO_POST
+      - PACKAGE_VALUABLE
+      - PACKAGE_VALUABLE_SK_ALL
+      - PACKAGE_VALUABLE_SK_SK
+      - PERSONAL_TAKEOVER
+      - PERSONAL_TAKEOVER_ADVANCED_PAYMENT
+      - RECOMMENDED_CONSIGNMENT
+      - RECOMMENDED_CONSIGNMENT_SK_ALL
+      - RECOMMENDED_CONSIGNMENT_SK_SK
+      - SHIPMENT_ABROAD
+      - SHIPPING_WITHIN_CZ
+      - SHIPPING_WITHIN_CZ_WITH_CASH_ON_DELIVERY
+      - USER_SHIPPING_COMMON_HR_ALL
+      - USER_SHIPPING_COMMON_HR_AT
+      - USER_SHIPPING_COMMON_HR_CZ
+      - USER_SHIPPING_COMMON_HR_DE
+      - USER_SHIPPING_COMMON_HR_HR
+      - USER_SHIPPING_COMMON_HR_HU
+      - USER_SHIPPING_COMMON_HR_PL
+      - USER_SHIPPING_COMMON_HR_SI
+      - USER_SHIPPING_COMMON_HR_SK
+      - USER_SHIPPING_COMMON_HU_ALL
+      - USER_SHIPPING_COMMON_HU_AT
+      - USER_SHIPPING_COMMON_HU_CZ
+      - USER_SHIPPING_COMMON_HU_DE
+      - USER_SHIPPING_COMMON_HU_HR
+      - USER_SHIPPING_COMMON_HU_HU
+      - USER_SHIPPING_COMMON_HU_PL
+      - USER_SHIPPING_COMMON_HU_SI
+      - USER_SHIPPING_COMMON_HU_SK
+      - USER_SHIPPING_COMMON_PL_ALL
+      - USER_SHIPPING_COMMON_PL_AT
+      - USER_SHIPPING_COMMON_PL_CZ
+      - USER_SHIPPING_COMMON_PL_DE
+      - USER_SHIPPING_COMMON_PL_HR
+      - USER_SHIPPING_COMMON_PL_HU
+      - USER_SHIPPING_COMMON_PL_PL
+      - USER_SHIPPING_COMMON_PL_SI
+      - USER_SHIPPING_COMMON_PL_SK
+      - USER_SHIPPING_COMMON_SI_ALL
+      - USER_SHIPPING_COMMON_SI_AT
+      - USER_SHIPPING_COMMON_SI_CZ
+      - USER_SHIPPING_COMMON_SI_DE
+      - USER_SHIPPING_COMMON_SI_HR
+      - USER_SHIPPING_COMMON_SI_HU
+      - USER_SHIPPING_COMMON_SI_PL
+      - USER_SHIPPING_COMMON_SI_SI
+      - USER_SHIPPING_COMMON_SI_SK
+      - USER_SHIPPING_INSURED_HR_ALL
+      - USER_SHIPPING_INSURED_HR_AT
+      - USER_SHIPPING_INSURED_HR_CZ
+      - USER_SHIPPING_INSURED_HR_DE
+      - USER_SHIPPING_INSURED_HR_HR
+      - USER_SHIPPING_INSURED_HR_HU
+      - USER_SHIPPING_INSURED_HR_PL
+      - USER_SHIPPING_INSURED_HR_SI
+      - USER_SHIPPING_INSURED_HR_SK
+      - USER_SHIPPING_INSURED_HU_ALL
+      - USER_SHIPPING_INSURED_HU_AT
+      - USER_SHIPPING_INSURED_HU_CZ
+      - USER_SHIPPING_INSURED_HU_DE
+      - USER_SHIPPING_INSURED_HU_HR
+      - USER_SHIPPING_INSURED_HU_HU
+      - USER_SHIPPING_INSURED_HU_PL
+      - USER_SHIPPING_INSURED_HU_SI
+      - USER_SHIPPING_INSURED_HU_SK
+      - USER_SHIPPING_INSURED_PL_ALL
+      - USER_SHIPPING_INSURED_PL_AT
+      - USER_SHIPPING_INSURED_PL_CZ
+      - USER_SHIPPING_INSURED_PL_DE
+      - USER_SHIPPING_INSURED_PL_HR
+      - USER_SHIPPING_INSURED_PL_HU
+      - USER_SHIPPING_INSURED_PL_PL
+      - USER_SHIPPING_INSURED_PL_SI
+      - USER_SHIPPING_INSURED_PL_SK
+      - USER_SHIPPING_INSURED_SI_ALL
+      - USER_SHIPPING_INSURED_SI_AT
+      - USER_SHIPPING_INSURED_SI_CZ
+      - USER_SHIPPING_INSURED_SI_DE
+      - USER_SHIPPING_INSURED_SI_HR
+      - USER_SHIPPING_INSURED_SI_HU
+      - USER_SHIPPING_INSURED_SI_PL
+      - USER_SHIPPING_INSURED_SI_SI
+      - USER_SHIPPING_INSURED_SI_SK
+      - WRITING_STANDARD
+      - WRITING_VALUABLE
+      - ZASILKOVNA
+      - ZASILKOVNA_ADDRESS
+      - ZASILKOVNA_ADDRESS_AT
+      - ZASILKOVNA_ADDRESS_DE
+      - ZASILKOVNA_ADDRESS_HR
+      - ZASILKOVNA_ADDRESS_HU
+      - ZASILKOVNA_ADDRESS_PL
+      - ZASILKOVNA_ADDRESS_SI
+      - ZASILKOVNA_ADDRESS_SK
+      - ZASILKOVNA_CASH_ON_DELIVERY
+      - ZASILKOVNA_CASH_ON_DELIVERY_ADDRESS
+      - ZASILKOVNA_CASH_ON_DELIVERY_ADDRESS_SK
+      - ZASILKOVNA_CASH_ON_DELIVERY_SK
+      - ZASILKOVNA_DE
+      - ZASILKOVNA_HR
+      - ZASILKOVNA_HU
+      - ZASILKOVNA_PL
+      - ZASILKOVNA_SI
+      - ZASILKOVNA_SK
+    ShippingMethodV3:
+      type: object
+      properties:
+        code:
+          $ref: '#/components/schemas/ShippingMethodCodeEnum'
+        name:
+          type: string
+      description: 'Object containing data on the mode of transport.
+
+        '
+    PaymentMethodCodeEnumV3:
+      type: string
+      enum:
+      - ONLINE_PAY
+      - WIRE_TRANSFER
+      - COLLECT_ON_DELIVERY
+      - PAY_VIA_AUKRO
+    PaymentDetailPayViaAukroV3:
+      type: object
+      required:
+      - paymentViaAukroId
+      description: Details about PAY_VIA_AUKRO payment type
+      properties:
+        paymentViaAukroId:
+          type: integer
+          format: int64
+    PaymentMethodV3:
+      type: object
+      properties:
+        code:
+          $ref: '#/components/schemas/PaymentMethodCodeEnumV3'
+        name:
+          type: string
+        detail:
+          type: object
+          oneOf:
+          - $ref: '#/components/schemas/PaymentDetailPayViaAukroV3'
+      description: 'Object containing information on the method of payment.
+
+        '
+    StandardAddressV3:
+      type: object
+      properties:
+        firstName:
+          type: string
+          description: 'addressee''s first name
+
+            '
+        lastName:
+          type: string
+          description: 'addressee''s last name
+
+            '
+        company:
+          type: string
+          description: 'company name
+
+            '
+        street:
+          type: string
+          description: 'street and the descriptive / indicative number of address
+
+            '
+        city:
+          type: string
+          description: 'the city of the given address
+
+            '
+        zipCode:
+          type: string
+          description: 'the post code of the given address
+
+            '
+        country:
+          type: string
+          minLength: 2
+          maxLength: 2
+          description: 'country code in compliance with ISO 3166 standard alpha-2
+            variant
+
+            '
+      description: 'Object containing information about the delivery address.
+
+        '
+    PickupPointAddressV3:
+      type: object
+      properties:
+        id:
+          deprecated: true
+          type: integer
+          format: int64
+          description: 'Place of sale ID assigned by the operator of the place of
+            sale network (e.g. Zásilkovna)
+
+            '
+        code:
+          type: string
+          description: 'Place of sale ID assigned by the operator of the place of
+            sale network (e.g. Zásilkovna, PPL, etc.)
+
+            '
+        name:
+          type: string
+          description: 'The name of the pick-up point, which is assigned by the operator
+            of the pick-up point network
+
+            '
+        address:
+          type: string
+          description: 'address of the pick-up point
+
+            '
+        firstName:
+          type: string
+          description: 'First name of the receiver
+
+            '
+        lastName:
+          type: string
+          description: 'Last name of the receiver
+
+            '
+      description: 'Object containing information about the delivery point.
+
+        '
+    AddressV3:
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+          - STANDARD
+          - PICKUP_POINT
+          description: 'address type
+
+            '
+        detail:
+          type: object
+          oneOf:
+          - $ref: '#/components/schemas/StandardAddressV3'
+          - $ref: '#/components/schemas/PickupPointAddressV3'
+      description: 'Object containing address information.
+
+        '
+    OrderItemV3:
+      type: object
+      properties:
+        orderItemId:
+          type: integer
+          format: int64
+          description: 'Order Item ID
+
+            '
+        orderItemType:
+          type: string
+          enum:
+          - AUCTION
+          - BUYNOW
+        itemId:
+          type: integer
+          format: int64
+          description: 'Aukro ID of the offer that was purchased
+
+            '
+        itemExtId:
+          type: string
+          description: 'Custom external identifier of the offer that was purchased,
+            if it was provided
+
+            '
+        itemName:
+          type: string
+          description: 'Name of the offer that was purchased
+
+            '
+        quantity:
+          type: integer
+          description: 'Number of units of the purchased offer
+
+            '
+        price:
+          $ref: '#/components/schemas/MonetaryAmount'
+        auctionWonTimestamp:
+          type: string
+          format: date-time
+          description: 'Timestamp of when the offer was won (only if orderType ==
+            “auction”)
+
+            '
+      description: 'Object containing data about one order item.
+
+        '
+    WebhookEventNewOrderSubmittedV3:
+      type: object
+      properties:
+        orderId:
+          type: integer
+          format: int64
+          description: 'Unique identification of the given order assigned by Aukro
+
+            '
+        buyerNickname:
+          type: string
+          description: 'The nickname of the buyer of the given order on Aukro
+
+            '
+        buyerEmail:
+          type: string
+          description: 'contact email for the buyer of the given order
+
+            '
+        buyerPhone:
+          type: string
+          description: 'contact phone number for the buyer of the given order
+
+            '
+        buyerRegNumber:
+          type: string
+          description: 'Company registration number (if the buyer is a company).
+
+            '
+        buyerVatNumber:
+          type: string
+          description: 'VAT identification number (if the buyer is a company).
+
+            '
+        totalAmount:
+          type: number
+          $ref: '#/components/schemas/MonetaryAmount'
+        shipping:
+          $ref: '#/components/schemas/ShippingMethodV3'
+          description: 'selected method of delivery of the given order
+
+            '
+        shippingPrice:
+          $ref: '#/components/schemas/MonetaryAmount'
+        payment:
+          $ref: '#/components/schemas/PaymentMethodV3'
+          description: 'selected method of payment of the given order
+
+            '
+        billingAddress:
+          $ref: '#/components/schemas/StandardAddressV3'
+          description: 'the buyer''s billing address for the given order
+
+            '
+        shippingAddress:
+          $ref: '#/components/schemas/AddressV3'
+          description: 'the buyer''s delivery address or the name of the delivery
+            point that the buyer has chosen for the given order
+
+            '
+        orderNote:
+          type: string
+          description: 'order note
+
+            '
+        orderItems:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrderItemV3'
+          description: 'list of items of the given order
+
+            '
+      description: 'Object containing complete order information.
+
+        '
+    WebhookEventItemWonExpired:
+      required:
+      - buyerEmail
+      - orderItemId
+      - itemId
+      type: object
+      properties:
+        expiredWonItems:
+          type: array
+          items:
+            type: object
+            properties:
+              buyerEmail:
+                type: string
+                description: 'Email address of the winner who did not fill in the
+                  shipping and payment information
+
+                  '
+              orderItemId:
+                type: integer
+                format: int64
+                description: 'ID of the order item for which the order will no longer
+                  be created due to the buyer''s inactivity
+
+                  '
+              itemId:
+                type: integer
+                format: int64
+                description: 'ID of the auction that was won but withdrawn from the
+                  purchase contract
+
+                  '
+          description: 'ID of the bid that ended and, in the case of an auction, did
+            not end in a win
+
+            '
+    WebhookEventOrderStoppedByBuyerV1:
+      type: object
+      properties:
+        orderId:
+          type: integer
+          format: int64
+          description: 'Unique identification of the given order assigned by Aukro
+
+            '
+    WebhookEventOrderPaymentReturnedToBuyerV1:
+      type: object
+      properties:
+        orderId:
+          type: integer
+          format: int64
+          description: 'Unique identification of the given order assigned by Aukro
+
+            '
+    WebhookEventOrderNotPaidV1:
+      type: object
+      properties:
+        orderId:
+          type: integer
+          format: int64
+          description: 'Unique identification of the given order assigned by Aukro
+
+            '
+    WebhookEventOrderReceivedPaymentSplitV1:
+      type: object
+      properties:
+        orderId:
+          type: integer
+          format: int64
+          description: 'Unique identification of the given order assigned by Aukro
+
+            '
+    WebhookEventOrderPaid:
+      type: object
+      properties:
+        orderIds:
+          items:
+            type: integer
+            format: int64
+            description: 'Unique identification of the given order assigned by Aukro
+
+              '
+    WebhookEventOrderReceived:
+      type: object
+      properties:
+        orderIds:
+          items:
+            type: integer
+            format: int64
+            description: 'Unique identification of the given order assigned by Aukro
+
+              '
+    WebhookEventOrderPaidOutV1:
+      type: object
+      properties:
+        orderId:
+          type: integer
+          format: int64
+          description: 'Unique identification of the given order assigned by Aukro
+
+            '
+    WebhookEventItemBidV3:
+      type: object
+      properties:
+        itemId:
+          type: integer
+          format: int64
+          description: Unique ID of the item assigned by Aukro.
+        amount:
+          $ref: '#/components/schemas/MonetaryAmount'
+    WebhookEventItemReexposed:
+      type: object
+      required:
+      - reexposedItems
+      properties:
+        reexposedItems:
+          type: array
+          items:
+            type: object
+            required:
+            - reexposedItemId
+            - success
+            properties:
+              reexposedItemId:
+                type: integer
+                format: int64
+                description: ID of original item which has been re-exposed/prolonged.
+              newItemId:
+                type: integer
+                format: int64
+                description: 'ID of newly created item if re-exposure/prolongation
+                  succeeded without errors.
+
+                  The ID is same as reexposedItemId in case of prolonging, different
+                  from reexposedItemId in case of re-exposure.
+
+                  '
+              success:
+                type: boolean
+                description: Flag whether the re-exposure/prolongation passed without
+                  errors.
+    WebhookEventCancelBidV2:
+      type: object
+      properties:
+        itemId:
+          type: integer
+          format: int64
+          description: Unique ID of the item assigned by Aukro.
+        currentPrice:
+          $ref: '#/components/schemas/MonetaryAmount'
+    WebhookEventPacketOrderedV1:
+      required:
+      - orderId
+      - packetId
+      - carrierPacketId
+      type: object
+      properties:
+        orderId:
+          type: integer
+          format: int64
+          description: 'Unique identification of the given order assigned by Aukro
+
+            '
+        packetId:
+          type: integer
+          format: int64
+          description: 'Unique identification of the given packet assigned by Aukro
+
+            '
+        carrierPacketId:
+          type: string
+          description: 'Unique identification of the given packet assigned by Shipping
+            carrier
+
+            '
+        confirmCode:
+          type: string
+          description: 'A unique code that the seller must provide to the carrier
+            when handing over the packet
+
+            '
+        pickUpDate:
+          type: string
+          format: date-time
+          description: 'The scheduled date and time when the carrier is expected to
+            pick up the packet from the seller
+
+            '
+    WebhookEventPacketNewLabelV1:
+      required:
+      - packetId
+      - labelFile
+      type: object
+      properties:
+        packetId:
+          type: integer
+          format: int64
+          description: 'Unique identification of the given packet assigned by Aukro
+
+            '
+        labelFile:
+          type: string
+          description: 'A URL to a file containing a shipping label that must be securely
+            and visibly attached to a packet before handing the packet over to the
+            carrier
+
+            '
+    WebhookEventPacketFailedV1:
+      required:
+      - packetId
+      type: object
+      properties:
+        packetId:
+          type: integer
+          format: int64
+          description: 'Unique identification of the given packet assigned by Aukro
+
+            '
+    WebhookEventWrapper:
+      type: object
+      properties:
+        eventType:
+          $ref: '#/components/schemas/WebhookEventTypeEnum'
+        eventTimestamp:
+          type: string
+          format: date-time
+        eventDetail:
+          type: object
+          oneOf:
+          - $ref: '#/components/schemas/WebhookEventItemExpired'
+          - $ref: '#/components/schemas/WebhookEventItemCreatedV1'
+          - $ref: '#/components/schemas/WebhookEventItemExposedV1'
+          - $ref: '#/components/schemas/WebhookEventItemWon'
+          - $ref: '#/components/schemas/WebhookEventItemTerminated'
+          - $ref: '#/components/schemas/WebhookEventNewOrderSubmittedV3'
+          - $ref: '#/components/schemas/WebhookEventItemWonExpired'
+          - $ref: '#/components/schemas/WebhookEventOrderStoppedByBuyerV1'
+          - $ref: '#/components/schemas/WebhookEventOrderPaymentReturnedToBuyerV1'
+          - $ref: '#/components/schemas/WebhookEventOrderNotPaidV1'
+          - $ref: '#/components/schemas/WebhookEventOrderReceivedPaymentSplitV1'
+          - $ref: '#/components/schemas/WebhookEventOrderPaid'
+          - $ref: '#/components/schemas/WebhookEventOrderReceived'
+          - $ref: '#/components/schemas/WebhookEventOrderPaidOutV1'
+          - $ref: '#/components/schemas/WebhookEventItemBidV3'
+          - $ref: '#/components/schemas/WebhookEventItemReexposed'
+          - $ref: '#/components/schemas/WebhookEventCancelBidV2'
+          - $ref: '#/components/schemas/WebhookEventPacketOrderedV1'
+          - $ref: '#/components/schemas/WebhookEventPacketNewLabelV1'
+          - $ref: '#/components/schemas/WebhookEventPacketFailedV1'
+    OffersV2BulkRequestElement:
+      type: object
+      required:
+      - entityId
+      - offer
+      properties:
+        entryId:
+          type: integer
+          description: Entry Id, unique within the batch request
+        offer:
+          $ref: '#/components/schemas/OfferV2Request'
+    OffersV2BulkResponseElement:
+      type: object
+      properties:
+        entryId:
+          type: integer
+          description: The Id of the request entry this entry responds to.
+        offer:
+          $ref: '#/components/schemas/OfferV2Response'
+  parameters:
+    XAcceptLanguageHeader:
+      in: header
+      name: X-Accept-Language
+      schema:
+        type: string
+        format: BCP-47 standard
+        default: cs-CZ
+      required: false
+    XAcceptCurrencyHeader:
+      in: header
+      name: X-Accept-Currency
+      schema:
+        title: Three-character ISO-4217 currency code. Not all currencies are supported
+        type: string
+        minLength: 3
+        maxLength: 3
+        default: CZK
+      required: false
+  responses:
+    '400':
+      description: Bad Request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/RestError'
+    '403':
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/RestError'
+    '404':
+      description: Not Found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/RestError'
+    '409':
+      description: Conflict
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/RestError'
+    '417':
+      description: Expectation Failed
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/RestError'
+    '500':
+      description: Internal Server Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/RestError'
+    '503':
+      description: Service Unavailable
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/RestError'
+    409_webhook_settings_not_present:
+      description: Webhook settings not present
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/RestError'
